@@ -7,7 +7,7 @@ const Login = () => {
   return (
     <main className="flex h-screen w-full bg-gray-50">
       {/* Left Side - Image */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden">
+      <div className="hidden lg:flex flex-[1.5] relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20 z-10"></div>
         <img
           src={img}
@@ -25,9 +25,9 @@ const Login = () => {
         <div className="w-full max-w-md space-y-8">
           {/* Header & Logo */}
           <div className="text-center">
-            <div className="mx-auto h-16 w-50 items-center justify-center">
+            <div className="mx-auto h-20 w-auto flex items-center justify-center mb-6">
               {/* <span className="text-white font-bold text-2xl">S</span> */}
-              <img src={logo} alt="" />
+              <img src={logo} alt="Sairam Logo" className="h-full object-contain" />
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
               Sign in to your account
