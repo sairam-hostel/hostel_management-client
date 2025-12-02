@@ -29,7 +29,7 @@ const Login = () => {
               {/* <span className="text-white font-bold text-2xl">S</span> */}
               <img src={logo} alt="Sairam Logo" className="h-full object-contain" />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Sign in to your account
             </h2>
             <p className="mt-2 text-sm text-gray-600">
