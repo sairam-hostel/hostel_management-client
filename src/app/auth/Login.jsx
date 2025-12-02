@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import img from "./sairam campus.jpg";
-import logo from "./sairam-sec-logo.png"
+import logo from "./Sairam-instuition.png"
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
