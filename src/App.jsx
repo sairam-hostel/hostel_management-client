@@ -1,15 +1,20 @@
 import React from 'react'
 import Login from './app/auth/Login';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import StudentDashboard from './app/Home/student_dashboard/StudentDashboard';
-import AdminDashboard from './app/Home/admin_dashboard/AdminDashboard';
+import StudentDashboard from './app/student/student dashborad/StudentDashboard';
+import StudentLayout from './app/student/student';
+import Outpass from './app/student/Outpass';
+import AdminDashboard from './app/admin/AdminDashboard';
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/student" element={<StudentLayout />}>
+          <Route index element={<StudentDashboard />} />
+          <Route path="outpass" element={<Outpass />} />
+        </Route>
 
         
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
