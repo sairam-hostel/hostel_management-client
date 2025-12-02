@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import img from "./sairam campus.jpg";
-import logo from "./sairam-sec-logo.png"
+import logo from "./Sairam-instuition.png"
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -29,7 +29,7 @@ const Login = () => {
               {/* <span className="text-white font-bold text-2xl">S</span> */}
               <img src={logo} alt="Sairam Logo" className="h-full object-contain" />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Sign in to your account
             </h2>
             <p className="mt-2 text-sm text-gray-600">
@@ -42,7 +42,7 @@ const Login = () => {
           </div>
 
           {/* Form */}
-          <form className="mt-8 space-y-6">
+            <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); /* Add authentication logic here */ }}>
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
