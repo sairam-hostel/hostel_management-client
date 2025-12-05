@@ -1,8 +1,55 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import img from "./sairam campus.jpg";
 import logo from "./Sairam-instuition.png"
+import api from "../../utils/api";
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState("student"); // "student" or "admin"
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    
+    if (role === "admin") {
+      setLoading(true);
+      try {
+        const response = await api.post("/bf1/auth/login", { email, password });
+        const data = response.data;
+
+        console.log("Login successful:", data);
+        // You might want to store the token here, e.g., localStorage.setItem('token', data.token);
+        navigate("/admin");
+      } catch (err) {
+        console.error("Login error:", err);
+        setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setLoading(true);
+      try {
+        const response = await api.post("/bs1/auth/login", { email, password });
+        const data = response.data;
+
+        console.log("Student Login successful:", data);
+        // You might want to store the token here, e.g., localStorage.setItem('token', data.token);
+        navigate("/student");
+      } catch (err) {
+        console.error("Student Login error:", err);
+        setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <main className="flex h-screen w-full bg-gray-50">
@@ -26,13 +73,39 @@ const Login = () => {
           {/* Header & Logo */}
           <div className="text-center">
             <div className="mx-auto h-20 w-auto flex items-center justify-center mb-6">
-              {/* <span className="text-white font-bold text-2xl">S</span> */}
               <img src={logo} alt="Sairam Logo" className="h-full object-contain" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Sign in to your account
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            
+            {/* Role Toggle */}
+            <div className="mt-6 flex justify-center">
+              <div className="bg-gray-100 p-1 rounded-lg inline-flex">
+                <button
+                  onClick={() => { setRole("student"); setError(""); }}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    role === "student"
+                      ? "bg-white text-purple-700 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Student
+                </button>
+                <button
+                  onClick={() => { setRole("admin"); setError(""); }}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    role === "admin"
+                      ? "bg-white text-purple-700 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Admin
+                </button>
+              </div>
+            </div>
+
+            <p className="mt-4 text-sm text-gray-600">
               Or{" "}
               <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
                 contact support
@@ -42,7 +115,12 @@ const Login = () => {
           </div>
 
           {/* Form */}
-            <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); /* Add authentication logic here */ }}>
+          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -55,8 +133,10 @@ const Login = () => {
                     type="email"
                     autoComplete="email"
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200"
-                    placeholder="student@sairam.edu.in"
+                    placeholder={role === "admin" ? "admin@sairam.edu.in" : "student@sairam.edu.in"}
                   />
                 </div>
               </div>
@@ -72,6 +152,8 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 pr-10"
                     placeholder="••••••••"
                   />
@@ -118,9 +200,10 @@ const Login = () => {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                disabled={loading}
+                className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                Sign in
+                {loading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
