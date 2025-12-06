@@ -7,6 +7,19 @@ const axiosInstance = axios.create({
   },
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 const api = {
   get: (url, config = {}) => axiosInstance.get(url, config),
   post: (url, data, config = {}) => axiosInstance.post(url, data, config),

@@ -24,9 +24,13 @@ const Login = () => {
         const response = await api.post("/bf1/auth/login", { email, password });
         const data = response.data;
 
-        console.log("Login successful:", data);
-        // You might want to store the token here, e.g., localStorage.setItem('token', data.token);
-        navigate("/admin");
+        if (data.success) {
+          console.log("Login successful:", data);
+          localStorage.setItem('token', data.data.access_token);
+          navigate("/admin");
+        } else {
+          setError(data.message || "Login failed.");
+        }
       } catch (err) {
         console.error("Login error:", err);
         setError(err.response?.data?.message || "Login failed. Please check your credentials.");
