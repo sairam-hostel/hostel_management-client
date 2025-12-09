@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileEdit, Bell, Search } from 'lucide-react';
+import { LayoutDashboard, FileEdit, BellRing, Search } from 'lucide-react';
 import logo from '../auth/Sairam-instuition.png';
 
 const STUDENT_NAV_ITEMS = [
@@ -14,6 +14,12 @@ const STUDENT_NAV_ITEMS = [
     label: 'Outpass',
     icon: FileEdit,
   },
+  {
+    path: '/student/notification', 
+    label:'Notification',
+    icon: BellRing,
+
+  }
 ];
 
 const StudentLayout = () => {

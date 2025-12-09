@@ -13,17 +13,81 @@ const Outpass = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
+    if (name === 'proof' && files && files[0]) {
+      const file = files[0];
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please upload a PDF or image file (JPG, PNG)');
+        e.target.value = null;
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert('File size must be less than 5MB');
+        e.target.value = null;
+        return;
+      }
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: files ? files[0] : value
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
-    alert('Outpass Request Submitted');
+
+    // Date Validation
+    if (
+      formData.fromLeave &&
+      formData.toLeave &&
+      formData.fromLeave > formData.toLeave
+    ) {
+      alert("End date must be after or equal to start date");
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach(key => {
+        formDataToSend.append(key, formData[key]);
+      });
+
+      // Assuming backend endpoint is /api/outpass
+      // Note: This needs a backend to work. 
+      const response = await fetch('/api/outpass', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (response.ok) {
+        alert('Outpass Request Submitted Successfully');
+        // Reset form
+        setFormData({
+          name: '',
+          year: '',
+          department: '',
+          fromLeave: '',
+          toLeave: '',
+          reason: '',
+          proof: null
+        });
+        e.target.reset(); // Reset file input
+      } else {
+        alert('Failed to submit request. Please try again.');
+        console.error('Submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
@@ -87,6 +151,7 @@ const Outpass = () => {
               name="fromLeave"
               value={formData.fromLeave}
               onChange={handleChange}
+              min={today}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
             />
@@ -99,6 +164,7 @@ const Outpass = () => {
               name="toLeave"
               value={formData.toLeave}
               onChange={handleChange}
+              min={formData.fromLeave || today}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
             />
