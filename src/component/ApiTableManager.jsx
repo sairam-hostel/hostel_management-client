@@ -84,6 +84,18 @@ const ApiTableManager = ({
 
   const totalPages = Math.ceil(total / limit);
 
+  // Reset page to 1 when limit changes
+  useEffect(() => {
+    setPage(1);
+  }, [limit]);
+
+  // Clamp page if totalPages changes (e.g. deletion reduces pages)
+  useEffect(() => {
+    if (page > totalPages && totalPages > 0) {
+      setPage(Math.max(1, totalPages));
+    }
+  }, [page, totalPages]);
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Header Controls */}
