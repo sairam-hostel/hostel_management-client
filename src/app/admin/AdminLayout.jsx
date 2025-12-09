@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileCheck, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileCheck, LogOut, UserPlus } from 'lucide-react';
 import logo from '../auth/Sairam-instuition.png';
 
 const ADMIN_NAV_ITEMS = [
@@ -13,6 +13,23 @@ const ADMIN_NAV_ITEMS = [
     path: '/admin/leave-management',
     label: 'Leave Management',
     icon: FileCheck,
+  },
+  {
+    path: '/admin/students/add', // Direct link to add, or could be a separate manage page. Let's make it intuitive.
+    // Actually, usually "Manage Students" goes to the list, and the list has an "Add" button.
+    // But user asked "create a new login... with the ADMIN_NAV_ITEMS as manage student"
+    // So let's add a "Add Student" or just link to the list again?
+    // "create a new login... as a for with the ADMIN_NAV_ITEMS as manage student"
+    // Maybe "Manage Student" -> Student List.
+    // EXISTING: Dashboard -> StudentList.
+    // Let's rename Dashboard or keep it?
+    // Let's add "Manage Students" which points to the list (or maybe we rename Dashboard to Overview and Manage Students is the list).
+    // For now, I'll add "Add Student" as a direct link OR just "Manage Students" -> '/admin/students/add' based on specific request "as a form". 
+    // Wait, request: "create a new login... as a for with the ADMIN_NAV_ITEMS as manage student"
+    // I will interpret "Manage Student" -> '/admin/create-student' (the form).
+    path: '/admin/create-student', 
+    label: 'Manage Student',
+    icon: UserPlus,
   },
 ];
 
