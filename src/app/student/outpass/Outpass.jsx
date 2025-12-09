@@ -1,0 +1,149 @@
+import React from 'react';
+
+const Outpass = () => {
+  const [formData, setFormData] = React.useState({
+    name: '',
+    year: '',
+    department: '',
+    fromLeave: '',
+    toLeave: '',
+    reason: '',
+    proof: null
+  });
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: files ? files[0] : value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form Submitted:', formData);
+    alert('Outpass Request Submitted');
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Apply for Outpass</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        {/* Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+            placeholder="Enter your full name"
+          />
+        </div>
+
+        {/* Year and Department Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+            <select
+              name="year"
+              value={formData.year}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white"
+            >
+              <option value="">Select Year</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+            <input
+              type="text"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+              placeholder="e.g. CSE, IT, ECE"
+            />
+          </div>
+        </div>
+
+        {/* Date Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">From Leave</label>
+            <input
+              type="date"
+              name="fromLeave"
+              value={formData.fromLeave}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">To Leave</label>
+            <input
+              type="date"
+              name="toLeave"
+              value={formData.toLeave}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        {/*Reason*/}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+          <textarea
+            name="reason"
+            value={formData.reason}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+            placeholder="Enter the reason for your outpass"
+          />
+        </div>
+
+        {/* Upload Proof*/}
+        <div className="grid grid-cols-1 gap-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Upload Proof
+          </label>
+          <input
+            type="file"
+            name="proof"
+            onChange={handleChange}
+            className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition-all"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-4">
+          <button
+            type="submit"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
+          >
+            Submit Request
+          </button>
+        </div>
+
+      </form>
+    </div>
+  );
+};
+
+export default Outpass;
