@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileCheck, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileCheck, LogOut, UserPlus } from 'lucide-react';
 import logo from '../auth/Sairam-instuition.png';
 
 const ADMIN_NAV_ITEMS = [
@@ -13,6 +13,11 @@ const ADMIN_NAV_ITEMS = [
     path: '/admin/leave-management',
     label: 'Leave Management',
     icon: FileCheck,
+  },
+  {
+    path: '/admin/create-student', 
+    label: 'Manage Student',
+    icon: UserPlus,
   },
 ];
 
