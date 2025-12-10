@@ -8,24 +8,27 @@ import AdminLayout from './app/admin/AdminLayout';
 import StudentList from './app/admin/StudentList';
 import LeaveManagement from './app/admin/LeaveManagement';
 import Notification from './app/student/notification/Notification';
+import { NotificationProvider } from './context/NotificationContext';
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
+      <NotificationProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
 
-        <Route path="/student" element={<StudentLayout />}>
-          <Route index element={<StudentDashboard />} />
-          <Route path="outpass" element={<Outpass />} />
-          <Route path="notification" element={<Notification />} />
-        </Route>
+          <Route path="/student" element={<StudentLayout />}>
+            <Route index element={<StudentDashboard />} />
+            <Route path="outpass" element={<Outpass />} />
+            <Route path="notification" element={<Notification />} />
+          </Route>
 
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<StudentList />} />
-          <Route path="leave-management" element={<LeaveManagement />} />
-        </Route>
-      </Routes>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<StudentList />} />
+            <Route path="leave-management" element={<LeaveManagement />} />
+          </Route>
+        </Routes>
+      </NotificationProvider>
     </Router>
   );
 }

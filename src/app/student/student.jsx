@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, FileEdit, BellRing, Search } from 'lucide-react';
 import logo from '../auth/Sairam-instuition.png';
+import { useNotification } from '../../context/NotificationContext';
 
 const STUDENT_NAV_ITEMS = [
   {
@@ -15,8 +16,8 @@ const STUDENT_NAV_ITEMS = [
     icon: FileEdit,
   },
   {
-    path: '/student/notification', 
-    label:'Notification',
+    path: '/student/notification',
+    label: 'Notification',
     icon: BellRing,
 
   }
@@ -25,6 +26,7 @@ const STUDENT_NAV_ITEMS = [
 const StudentLayout = () => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
+  const { unreadCount } = useNotification();
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -36,13 +38,19 @@ const StudentLayout = () => {
               key={path}
               to={path}
               className={`flex flex-col items-center justify-center w-full py-3 rounded-lg transition-all duration-200 text-xs font-medium
-              ${
-                isActive(path)
+              ${isActive(path)
                   ? 'bg-white text-purple-700 shadow-md'
                   : 'text-gray-200 hover:bg-purple-600 hover:text-white'
-              }`}
+                }`}
             >
-              <Icon size={22} />
+              <div className="relative">
+                <Icon size={22} />
+                {label === 'Notification' && unreadCount > 0 && (
+                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </div>
               <span className="mt-1 text-center">{label}</span>
             </Link>
           ))}
@@ -67,13 +75,13 @@ const StudentLayout = () => {
           {/* Right: Student Profile */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-purple-100">
+              <div className="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-purple-100">
                 S
               </div>
               <div className="text-right hidden md:block">
                 <p className="text-sm font-semibold text-gray-800">Student Name</p>
               </div>
-              
+
             </div>
           </div>
         </header>
