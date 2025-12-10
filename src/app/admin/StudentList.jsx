@@ -41,8 +41,11 @@ const StudentList = () => {
           <div className="h-9 w-9 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">
             {student.name?.charAt(0) || '?'}
           </div>
-          <div>
-            <p className="text-sm font-medium text-gray-900">{student.name || 'Unknown'}</p>
+          <div 
+            onClick={() => navigate(`/admin/student/view/${student.auth_user_id}`)}
+            className="cursor-pointer hover:bg-gray-50 rounded p-1 -ml-1 transition-colors"
+          >
+            <p className="text-sm font-medium text-purple-700 hover:text-purple-900 hover:underline">{student.name || 'Unknown'}</p>
             <p className="text-xs text-gray-500">{student.roll_number || 'N/A'}</p>
           </div>
         </div>
