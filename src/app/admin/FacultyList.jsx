@@ -41,8 +41,11 @@ const FacultyList = () => {
           <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
             {faculty.name?.charAt(0) || '?'}
           </div>
-          <div>
-            <p className="text-sm font-medium text-gray-900">{faculty.name || 'Unknown'}</p>
+          <div
+            onClick={() => navigate(`/admin/faculty/view/${faculty.auth_user_id}`)}
+            className="cursor-pointer hover:bg-gray-50 rounded p-1 -ml-1 transition-colors"
+          >
+            <p className="text-sm font-medium text-blue-700 hover:text-blue-900 hover:underline">{faculty.name || 'Unknown'}</p>
             <p className="text-xs text-gray-500">{faculty.qualification || 'N/A'}</p>
           </div>
         </div>

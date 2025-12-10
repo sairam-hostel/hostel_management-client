@@ -51,8 +51,11 @@ const NoticeList = () => {
           <div className="p-2 rounded-lg bg-purple-50 text-purple-600 mt-1">
             <Bell size={16} />
           </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-900 line-clamp-1">{notice.title || 'Untitled Notice'}</p>
+          <div 
+            onClick={() => navigate(`/admin/notices/view/${notice.notice_id || notice._id || notice.id}`)}
+            className="cursor-pointer hover:bg-gray-50 rounded p-1 -ml-1 transition-colors flex-1"
+          >
+            <p className="text-sm font-semibold text-gray-900 line-clamp-1 hover:text-purple-700">{notice.title || 'Untitled Notice'}</p>
             <p className="text-xs text-gray-500 line-clamp-2 max-w-md">{notice.message || 'No content'}</p>
             <div className="flex gap-2 mt-1">
                <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize ${getPriorityColor(notice.priority)}`}>
