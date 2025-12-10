@@ -15,7 +15,7 @@ const ADMIN_NAV_ITEMS = [
     icon: FileCheck,
   },
   {
-    path: '/admin/create-student', 
+    path: '/admin/students', 
     label: 'Manage Student',
     icon: UserPlus,
   },

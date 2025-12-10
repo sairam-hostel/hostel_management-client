@@ -62,7 +62,7 @@ const FacultyDetails = () => {
   const InfoItem = ({ label, value, fullWidth = false }) => (
     <div className={`${fullWidth ? 'md:col-span-2' : ''}`}>
       <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-      <p className="text-sm font-medium text-gray-900 break-words">{value || 'N/A'}</p>
+      <p className="text-sm font-medium text-gray-900 wrap-break-word">{value || 'N/A'}</p>
     </div>
   );
 

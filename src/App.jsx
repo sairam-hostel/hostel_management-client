@@ -15,6 +15,7 @@ import NoticeList from './app/admin/NoticeList';
 import NoticeForm from './app/admin/NoticeForm';
 import NoticeDetails from './app/admin/NoticeDetails';
 import StudentDetails from './app/admin/StudentDetails';
+import AdminDashboard from './app/admin/AdminDashboard';
 
 const App = () => {
   return (
@@ -28,7 +29,8 @@ const App = () => {
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<StudentList />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="students" element={<StudentList />} />
           <Route path="leave-management" element={<LeaveManagement />} />
           <Route path="create-student" element={<StudentForm />} />
           <Route path="student/view/:id" element={<StudentDetails />} />
