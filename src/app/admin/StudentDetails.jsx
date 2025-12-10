@@ -38,7 +38,7 @@ const StudentDetails = () => {
       <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
         <p className="text-red-500 font-medium mb-4">{error || 'Student not found'}</p>
         <button 
-          onClick={() => navigate('/admin')}
+          onClick={() => navigate('/admin/students')}
           className="text-purple-600 hover:text-purple-800 flex items-center gap-2"
         >
           <ArrowLeft size={16} /> Back to List
@@ -72,14 +72,14 @@ const StudentDetails = () => {
       <div className="max-w-5xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/admin/students')}
             className="p-2 hover:bg-white rounded-full text-gray-600 transition-colors shadow-sm bg-gray-100"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{student.name}</h1>
-            <p className="text-sm text-gray-500">{student.roll_number} • {student.department}</p>
+            <p className="text-sm text-gray-500">{student.roll_number} • {student.department || 'N/A'}</p>
           </div>
         </div>
         <button 
@@ -103,8 +103,8 @@ const StudentDetails = () => {
                  <h2 className="text-xl font-bold mb-1">{student.name}</h2>
                  <p className="text-purple-100 text-sm mb-4">{student.register_number}</p>
                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                   ${student.status === 'in' ? 'bg-green-400/20 text-green-100' : 'bg-yellow-400/20 text-yellow-100'}`}>
-                   Status: {student.status}
+                   ${(student.status || 'unknown') === 'in' ? 'bg-green-400/20 text-green-100' : 'bg-yellow-400/20 text-yellow-100'}`}>
+                   Status: {student.status || 'Unknown'}
                  </span>
               </div>
            </div>
@@ -153,7 +153,13 @@ const StudentDetails = () => {
            </InfoGroup>
 
            <InfoGroup icon={MapPin} title="Address">
-             <InfoItem label="Current Address" value={`${student.address_line_1 || ''} ${student.address_line_2 || ''}`} fullWidth />
+             <InfoItem 
+                label="Current Address" 
+                value={(student.address_line_1 || student.address_line_2) 
+                  ? `${student.address_line_1 || ''} ${student.address_line_2 || ''}`.trim() 
+                  : 'No address provided'} 
+                fullWidth 
+              />
              <InfoItem label="City" value={student.city} />
              <InfoItem label="State" value={student.state} />
              <InfoItem label="Pincode" value={student.pincode} />

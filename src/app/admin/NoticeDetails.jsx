@@ -57,6 +57,12 @@ const NoticeDetails = () => {
     }
   };
 
+  const safeDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const d = new Date(dateStr);
+    return !isNaN(d.getTime()) ? d.toLocaleDateString() : '—';
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       {/* Header */}
@@ -71,11 +77,11 @@ const NoticeDetails = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               Notice Details
-              <span className={`text-xs px-2 py-0.5 rounded-full border uppercase tracking-wider ${getPriorityColor(notice.priority)}`}>
-                {notice.priority}
+              <span className={`text-xs px-2 py-0.5 rounded-full border uppercase tracking-wider ${getPriorityColor(notice.priority || 'Normal')}`}>
+                {notice.priority || 'Normal'}
               </span>
             </h1>
-            <p className="text-sm text-gray-500 capitalize">{notice.category} • Posted on {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
+            <p className="text-sm text-gray-500 capitalize">{notice.category || 'General'} • Posted on {safeDate(notice.created_at)}</p>
           </div>
         </div>
         <button 
@@ -159,11 +165,11 @@ const NoticeDetails = () => {
               <div className="space-y-4">
                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
                     <span className="text-sm text-green-700">Valid From</span>
-                    <span className="font-semibold text-green-800">{new Date(notice.valid_from).toLocaleDateString()}</span>
+                    <span className="font-semibold text-green-800">{safeDate(notice.valid_from)}</span>
                  </div>
                  <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
                     <span className="text-sm text-red-700">Valid Till</span>
-                    <span className="font-semibold text-red-800">{new Date(notice.valid_till).toLocaleDateString()}</span>
+                    <span className="font-semibold text-red-800">{safeDate(notice.valid_till)}</span>
                  </div>
                  {notice.expires && (
                    <div className="flex items-center gap-2 text-xs text-orange-600 bg-orange-50 p-2 rounded justify-center">

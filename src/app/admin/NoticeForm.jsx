@@ -260,7 +260,21 @@ const NoticeForm = () => {
              <div className="mt-2 space-y-2">
                {formData.attachments.map((link, idx) => (
                  <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-100 text-xs">
-                   <span className="truncate flex-1 text-blue-600 hover:underline cursor-pointer" onClick={() => window.open(link, '_blank')}>{link}</span>
+                   <span 
+                     className="truncate flex-1 text-blue-600 hover:underline cursor-pointer" 
+                     onClick={() => {
+                       try {
+                         const url = new URL(link);
+                         if (['http:', 'https:'].includes(url.protocol.toLowerCase())) {
+                           window.open(url.href, '_blank', 'noopener,noreferrer');
+                         }
+                       } catch (e) {
+                         // Invalid URL, ignore
+                       }
+                     }}
+                   >
+                     {link}
+                   </span>
                    <button type="button" onClick={() => removeAttachment(idx)} className="text-red-500 hover:bg-red-50 p-1 rounded">
                      <X size={14} />
                    </button>
