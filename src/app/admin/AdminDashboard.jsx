@@ -191,7 +191,7 @@ const AdminDashboard = () => {
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className={`p-2.5 rounded-lg ${colorClass} bg-opacity-10 text-current`}>
-            <Icon size={22} className={colorClass.replace('text-', 'text-opacity-100 ')} />
+            <Icon size={22} className={`${colorClass} text-opacity-100`} />
           </div>
           {trend && (
             <div className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">

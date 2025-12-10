@@ -89,10 +89,18 @@ const FacultyForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name === 'experience_years') {
+      // Allow 0 as valid value, only treat empty string as missing
+      setFormData(prev => ({
+        ...prev,
+        [name]: value === '' ? '' : parseInt(value)
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -100,25 +108,32 @@ const FacultyForm = () => {
     setLoading(true);
     setError(null);
 
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.phone || !formData.department || !formData.role) {
+      setError('Please fill in all required fields');
+      setLoading(false);
+      return;
+    }
+
+    if (!isEditMode && !formData.password) {
+      setError('Password is required for new faculty');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Process assigned_floors_str into array of integers
-      // "1, 2, 3" -> [1, 2, 3]
-      const floorsArray = formData.assigned_floors_str
-        ? formData.assigned_floors_str.split(',')
-            .map(s => parseInt(s.trim()))
-            .filter(n => !isNaN(n))
-        : [];
+      const payload = {
+        ...formData,
+        assigned_floors: formData.assigned_floors_str 
+          ? formData.assigned_floors_str.split(',').map(num => parseInt(num.trim())).filter(n => !isNaN(n))
+          : []
+      };
 
-      const payload = { ...formData, assigned_floors: floorsArray };
-      // Remove temporary string field before sending
+      // Remove temporary field
       delete payload.assigned_floors_str;
-
-      // Also ensure experience_years is a number if present
-      if (payload.experience_years) {
-        payload.experience_years = parseInt(payload.experience_years);
-      }
-
+      
       if (isEditMode) {
+        delete payload.password; // Don't update password on edit
         await api.put(`/bf1/accounts/faculty/${id}`, payload);
       } else {
         await api.post('/bf1/accounts/faculty/register', payload);
