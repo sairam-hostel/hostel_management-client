@@ -8,6 +8,10 @@ import AdminLayout from './app/admin/AdminLayout';
 import StudentList from './app/admin/StudentList';
 import LeaveManagement from './app/admin/LeaveManagement';
 import StudentForm from './app/admin/StudentForm';
+import FacultyList from './app/admin/FacultyList';
+import FacultyForm from './app/admin/FacultyForm';
+import NoticeList from './app/admin/NoticeList';
+import NoticeForm from './app/admin/NoticeForm';
 
 const App = () => {
   return (
@@ -25,6 +29,12 @@ const App = () => {
           <Route path="leave-management" element={<LeaveManagement />} />
           <Route path="create-student" element={<StudentForm />} />
           <Route path="student/edit/:id" element={<StudentForm />} />
+          <Route path="faculty" element={<FacultyList />} />
+          <Route path="create-faculty" element={<FacultyForm />} />
+          <Route path="faculty/edit/:id" element={<FacultyForm />} />
+          <Route path="notices" element={<NoticeList />} />
+          <Route path="create-notice" element={<NoticeForm />} />
+          <Route path="notices/edit/:id" element={<NoticeForm />} />
         </Route>
       </Routes>
     </Router>
