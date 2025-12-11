@@ -8,7 +8,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("student"); // "student" or "admin"
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,7 +16,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     if (role === "admin") {
       setLoading(true);
       try {
@@ -44,8 +43,17 @@ const Login = () => {
         const data = response.data;
 
         console.log("Student Login successful:", data);
-        // You might want to store the token here, e.g., localStorage.setItem('token', data.token);
-        navigate("/student");
+
+        // robustly find the token
+        const token = data.access_token || data.data?.access_token || data.token;
+
+        if (token) {
+          localStorage.setItem('token', token);
+          navigate("/student");
+        } else {
+          console.error("Token not found in response", data);
+          setError("Login successful but token missing. Check console.");
+        }
       } catch (err) {
         console.error("Student Login error:", err);
         setError(err.response?.data?.message || "Login failed. Please check your credentials.");
@@ -82,27 +90,25 @@ const Login = () => {
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Sign in to your account
             </h2>
-            
+
             {/* Role Toggle */}
             <div className="mt-6 flex justify-center">
               <div className="bg-gray-100 p-1 rounded-lg inline-flex">
                 <button
                   onClick={() => { setRole("student"); setError(""); }}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    role === "student"
-                      ? "bg-white text-purple-700 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${role === "student"
+                    ? "bg-white text-purple-700 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Student
                 </button>
                 <button
                   onClick={() => { setRole("admin"); setError(""); }}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    role === "admin"
-                      ? "bg-white text-purple-700 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${role === "admin"
+                    ? "bg-white text-purple-700 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Admin
                 </button>
