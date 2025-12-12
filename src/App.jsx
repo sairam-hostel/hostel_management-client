@@ -9,6 +9,8 @@ import StudentList from './app/admin/StudentList';
 import LeaveManagement from './app/admin/LeaveManagement';
 import Notification from './app/student/notification/Notification';
 import { NotificationProvider } from './context/NotificationContext';
+import Complaints from './app/student/complaints/Complaints';
+import ComplaintDetails from './app/student/complaints/ComplaintDetails';
 
 const App = () => {
   return (
@@ -21,6 +23,8 @@ const App = () => {
             <Route index element={<StudentDashboard />} />
             <Route path="outpass" element={<Outpass />} />
             <Route path="notification" element={<Notification />} />
+            <Route path="complaints" element={<Complaints />} />
+            <Route path="complaints/:id" element={<ComplaintDetails />} />
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
