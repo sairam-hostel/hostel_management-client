@@ -69,6 +69,7 @@ const Notification = () => {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
   }
 
@@ -101,8 +102,8 @@ const Notification = () => {
             type="button"
             onClick={() => setFilter("all")}
             className={`px-3 py-1.5 text-xs font-medium rounded-full ${filter === "all"
-                ? "bg-purple-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+              ? "bg-purple-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
               }`}
           >
             All
@@ -111,8 +112,8 @@ const Notification = () => {
             type="button"
             onClick={() => setFilter("unread")}
             className={`px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1 ${filter === "unread"
-                ? "bg-purple-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+              ? "bg-purple-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
               }`}
           >
             Unread
@@ -164,8 +165,8 @@ const Notification = () => {
                       <div className="flex items-center justify-between gap-2">
                         <p
                           className={`text-sm truncate ${!item.is_seen
-                              ? "font-semibold text-gray-900"
-                              : "font-medium text-gray-700"
+                            ? "font-semibold text-gray-900"
+                            : "font-medium text-gray-700"
                             }`}
                         >
                           {item.title}

@@ -45,9 +45,15 @@ export const NotificationProvider = ({ children }) => {
                 n._id === noticeId ? { ...n, is_seen: true } : n
             ));
             // Optionally refetch or just leave the optimistic update
+            // Persist to server
+            // Persist to server
+            await api.post(`/bs1/notices/seen`, { noticeId });
         } catch (err) {
             console.error("Failed to mark notice as read:", err);
-            // Revert optimistic update if needed, but for 'read' status it's usually fine to fail silently or retry
+            // Revert optimistic update on failure
+            setNotices(prev => prev.map(n =>
+                n._id === noticeId ? { ...n, is_seen: false } : n
+            ));
         }
     };
 
@@ -60,6 +66,8 @@ export const NotificationProvider = ({ children }) => {
         // Only fetch if we have a token (user is logged in) - simple check
         if (localStorage.getItem('token')) {
             fetchNotices();
+        } else {
+            setLoading(false);
         }
     }, []);
 
