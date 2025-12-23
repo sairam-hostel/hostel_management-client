@@ -95,7 +95,7 @@ const FacultyDetails = () => {
         
         {/* Core Info & Status */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg md:col-span-1">
+           <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg md:col-span-1">
               <div className="flex flex-col items-center text-center">
                  <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold mb-4 backdrop-blur-sm">
                    {faculty.name?.charAt(0)}
