@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Users, UserPlus, FileText, Bell, School, GraduationCap, ArrowRight, TrendingUp, Calendar, Clock, Activity } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
 import api from '../../utils/api';
+import CustomDropdown from '../../component/CustomDropdown';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const AdminDashboard = () => {
     recentNotices: []
   });
   const [loading, setLoading] = useState(true);
+  const [timeframe, setTimeframe] = useState('Current Academic Year');
 
   // Chart Options State
   const [deptOption, setDeptOption] = useState({});
@@ -256,30 +258,59 @@ const AdminDashboard = () => {
          {/* Charts Group */}
          <div className="lg:col-span-2 space-y-8">
             {/* Analytics */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-gray-800">Enrollment Analytics</h3>
-                  <select className="text-xs border-none bg-gray-50 rounded-lg px-2 py-1 text-gray-500 font-medium cursor-pointer outline-none hover:bg-gray-100">
-                    <option>This Year</option>
-                    <option>Last Year</option>
-                  </select>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800">Enrollment Analytics</h3>
+                    <p className="text-sm text-gray-500 mt-1">Distribution overview</p>
+                  </div>
+                  <div className="w-56">
+                    <CustomDropdown 
+                      options={[
+                        { label: 'Current Academic Year', value: 'Current Academic Year' },
+                        { label: 'Previous Year', value: 'Previous Year' }
+                      ]}
+                      value={timeframe}
+                      onChange={setTimeframe}
+                      icon={Calendar}
+                    />
+                  </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="h-[250px]">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 text-center">By Department</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"> 
+                   {/* Divider for desktop */}
+                   <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gray-100 transform -translate-x-1/2"></div>
+
+                   <div className="h-[320px] w-full">
+                      <div className="flex items-center justify-center gap-2 mb-6">
+                        <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
+                        <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Department</p>
+                      </div>
                       {stats.students > 0 ? (
-                         <ReactECharts option={deptOption} style={{ height: '100%', width: '100%' }} />
+                         <ReactECharts option={deptOption} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
                       ) : (
-                         <div className="h-full flex items-center justify-center text-gray-300 text-sm">No Data</div>
+                         <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
+                            <div className="p-4 bg-gray-50 rounded-full"><School size={24} /></div>
+                            <span className="text-sm font-medium">No Department Data</span>
+                         </div>
                       )}
                    </div>
-                   <div className="h-[250px]">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 text-center">By Year</p>
+
+                   <div className="h-[320px] w-full">
+                      <div className="flex items-center justify-center gap-2 mb-6">
+                        <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+                        <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Year</p>
+                      </div>
                        {stats.students > 0 ? (
-                         <ReactECharts option={yearOption} style={{ height: '100%', width: '100%' }} />
+                         <ReactECharts option={{
+                           ...yearOption,
+                           grid: { ...yearOption.grid, top: '15%', bottom: '5%', left: '5%', right: '5%' } 
+                         }} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
                       ) : (
-                         <div className="h-full flex items-center justify-center text-gray-300 text-sm">No Data</div>
+                         <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
+                            <div className="p-4 bg-gray-50 rounded-full"><Calendar size={24} /></div>
+                            <span className="text-sm font-medium">No Year Data</span>
+                         </div>
                       )}
                    </div>
                 </div>
