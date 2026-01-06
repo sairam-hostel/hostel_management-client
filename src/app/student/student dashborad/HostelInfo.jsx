@@ -1,14 +1,16 @@
 import React from 'react';
 import { Home } from 'lucide-react';
 
-const HOSTEL_INFO = {
-  name: "Boys Hostel 1",
-  roomNumber: "305",
-  messPass: "Non-Veg", // Can be "Veg" or "Non-Veg"
-};
+const HostelInfo = ({ data }) => {
+  const hostel = {
+    name: data?.hostel_block || "Boys Hostel 1",
+    roomNumber: data?.room_number || "305",
+    messPass: "Non-Veg", // Default/Hardcoded as not in API
+    bedNumber: data?.bed_number,
+    wardenName: data?.warden_name
+  };
 
-const HostelInfo = () => {
-  const isVeg = HOSTEL_INFO.messPass.toLowerCase() === 'veg';
+  const isVeg = hostel.messPass.toLowerCase() === 'veg';
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 h-full">
@@ -21,18 +23,34 @@ const HostelInfo = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        
+
         {/* Hostel Name */}
         <div>
           <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Hostel Name</p>
-          <p className="text-sm font-semibold text-gray-900">{HOSTEL_INFO.name}</p>
+          <p className="text-sm font-semibold text-gray-900">{hostel.name}</p>
         </div>
 
         {/* Room Number */}
         <div>
           <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Room Number</p>
-          <p className="text-sm font-semibold text-gray-900">{HOSTEL_INFO.roomNumber}</p>
+          <p className="text-sm font-semibold text-gray-900">{hostel.roomNumber}</p>
         </div>
+
+        {/* Bed Number - New Field */}
+        {hostel.bedNumber && (
+          <div>
+            <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Bed Number</p>
+            <p className="text-sm font-semibold text-gray-900">{hostel.bedNumber}</p>
+          </div>
+        )}
+
+        {/* Warden Name - New Field */}
+        {hostel.wardenName && (
+          <div>
+            <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Warden Name</p>
+            <p className="text-sm font-semibold text-gray-900">{hostel.wardenName}</p>
+          </div>
+        )}
 
         {/* Mess Pass */}
         <div>
@@ -40,7 +58,7 @@ const HostelInfo = () => {
           <div className="flex items-center gap-2 mt-1">
             <span className={`h-3 w-3 rounded-full ${isVeg ? 'bg-green-500' : 'bg-red-500'}`}></span>
             <p className={`text-sm font-semibold ${isVeg ? 'text-green-700' : 'text-red-700'}`}>
-              {HOSTEL_INFO.messPass}
+              {hostel.messPass}
             </p>
           </div>
         </div>
