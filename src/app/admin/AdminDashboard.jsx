@@ -230,7 +230,7 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="p-8 max-w-7xl mx-auto min-h-screen">
+    <div className="max-w-7xl mx-auto">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
@@ -274,7 +274,7 @@ const AdminDashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          
          {/* Charts Group */}
          <div className="lg:col-span-2 space-y-8">

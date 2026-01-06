@@ -51,7 +51,7 @@ const AdminLayout = () => {
   const toggleSidebar = () => setIsMobileSidebarOpen(!isMobileSidebarOpen);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       {isMobileSidebarOpen && (
         <div 
@@ -136,7 +136,7 @@ const AdminLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-gray-50">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 bg-gray-50">
           <Outlet />
         </main>
       </div>
