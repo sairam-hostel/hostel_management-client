@@ -1,4 +1,5 @@
 import React from 'react';
+import CustomDropdown from '../../../component/CustomDropdown';
 
 const Outpass = () => {
   const [formData, setFormData] = React.useState({
@@ -113,19 +114,18 @@ const Outpass = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-            <select
-              name="year"
+
+            <CustomDropdown
+              options={[
+                { label: '1st Year', value: '1' },
+                { label: '2nd Year', value: '2' },
+                { label: '3rd Year', value: '3' },
+                { label: '4th Year', value: '4' }
+              ]}
               value={formData.year}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white"
-            >
-              <option value="">Select Year</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-              <option value="4">4th Year</option>
-            </select>
+              onChange={(value) => handleChange({ target: { name: 'year', value } })}
+              placeholder="Select Year"
+            />
           </div>
 
           <div>

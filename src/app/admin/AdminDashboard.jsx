@@ -78,42 +78,63 @@ const AdminDashboard = () => {
     const deptData = Object.keys(deptMap).map(key => ({ value: deptMap[key], name: key }));
 
     setDeptOption({
-      color: ['#6366f1', '#8b5cf6', '#ec4899', '#3b82f6', '#14b8a6'],
       tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)'
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        backgroundColor: '#fff',
+        borderColor: '#e5e7eb',
+        textStyle: { color: '#374151' }
       },
-      legend: {
-        bottom: '0%',
-        left: 'center',
-        icon: 'circle'
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        top: '10%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { type: 'dashed', color: '#f3f4f6' } },
+        axisLabel: { color: '#9ca3af' }
+      },
+      yAxis: {
+        type: 'category',
+        data: deptData.map(d => d.name),
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { 
+          color: '#4b5563',
+          fontWeight: 500,
+          width: 100, // Limit width to prevent overflow
+          overflow: 'truncate'
+        }
       },
       series: [
         {
-          name: 'Department',
-          type: 'pie',
-          radius: ['50%', '70%'],
-          avoidLabelOverlap: false,
+          name: 'Students',
+          type: 'bar',
+          data: deptData.map(d => d.value),
+          barWidth: '20px',
           itemStyle: {
-            borderRadius: 8,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 20,
-              fontWeight: 'bold'
+            borderRadius: [0, 4, 4, 0],
+            color: {
+              type: 'linear',
+              x: 0, y: 0, x2: 1, y2: 0,
+              colorStops: [
+                { offset: 0, color: '#ec4899' }, // Pink start
+                { offset: 1, color: '#f472b6' }  // Pink end
+              ]
             }
           },
-          labelLine: {
-            show: false
-          },
-          data: deptData
+          label: {
+             show: true,
+             position: 'right',
+             formatter: '{c}',
+             color: '#6b7280',
+             fontSize: 12
+          }
         }
       ]
     });
@@ -296,7 +317,7 @@ const AdminDashboard = () => {
                       )}
                    </div>
 
-                   <div className="h-[320px] w-full">
+                   <div className="h-[480px] w-full">
                       <div className="flex items-center justify-center gap-2 mb-6">
                         <div className="h-2 w-2 rounded-full bg-purple-500"></div>
                         <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Year</p>

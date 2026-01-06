@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import api from '../../../utils/api';
+import CustomDropdown from '../../../component/CustomDropdown';
 
 const CATEGORIES = ["room", "mess", "hostel", "electric", "water", "discipline", "other"];
 const SEVERITIES = ["low", "medium", "high"];
@@ -109,17 +110,16 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
             {/* Category */}
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">Category</label>
-              <select
-                name="category"
+              <CustomDropdown
+                options={CATEGORIES.map(cat => ({
+                  label: cat.charAt(0).toUpperCase() + cat.slice(1),
+                  value: cat
+                }))}
                 value={formData.category}
-                onChange={handleChange}
-                className={`w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 bg-white ${errors.category ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-purple-200'}`}
-              >
-                <option value="">Select Category</option>
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
-                ))}
-              </select>
+                onChange={(value) => handleChange({ target: { name: 'category', value } })}
+                placeholder="Select Category"
+                className={errors.category ? 'border-red-500' : ''}
+              />
               {errors.category && (
                 <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
                   <AlertCircle size={12} /> {errors.category}
@@ -130,16 +130,15 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
             {/* Severity */}
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">Severity</label>
-              <select
-                name="severity"
+              <CustomDropdown
+                options={SEVERITIES.map(sev => ({
+                  label: sev.charAt(0).toUpperCase() + sev.slice(1),
+                  value: sev
+                }))}
                 value={formData.severity}
-                onChange={handleChange}
-                className="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white"
-              >
-                {SEVERITIES.map(sev => (
-                  <option key={sev} value={sev}>{sev.charAt(0).toUpperCase() + sev.slice(1)}</option>
-                ))}
-              </select>
+                onChange={(value) => handleChange({ target: { name: 'severity', value } })}
+                placeholder="Select Severity"
+              />
             </div>
           </div>
 

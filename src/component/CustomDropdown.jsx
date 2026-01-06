@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 
-const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", icon: Icon }) => {
+const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", icon: Icon, className = "", dropUp = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -25,7 +25,7 @@ const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", i
   const selectedLabel = options.find(opt => opt.value === value)?.label || value || placeholder;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -49,7 +49,10 @@ const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", i
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-full min-w-[200px] bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+        <div className={`
+          absolute right-0 w-full min-w-[120px] bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100
+          ${dropUp ? 'bottom-full mb-2 origin-bottom-right' : 'top-full mt-2 origin-top-right'}
+        `}>
           <div className="p-1">
             {options.map((option) => (
               <button

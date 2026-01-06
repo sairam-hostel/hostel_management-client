@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, Loader, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+
 import api from '../utils/api';
+import CustomDropdown from './CustomDropdown';
 
 
 // Simple debounce utility if lodash is not installed or to keep it light
@@ -97,7 +99,7 @@ const ApiTableManager = ({
   }, [page, totalPages]);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100">
       {/* Header Controls */}
       <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
@@ -135,7 +137,7 @@ const ApiTableManager = ({
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-t-xl">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
@@ -178,15 +180,19 @@ const ApiTableManager = ({
           <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center gap-2">
               <p>Showing {data.length} of {total}</p>
-              <select 
-                value={limit} 
-                onChange={(e) => setLimit(Number(e.target.value))}
-                className="ml-2 border border-gray-200 rounded p-1 text-xs"
-              >
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
+              <div className="w-24">
+                <CustomDropdown 
+                  options={[
+                    { label: '10', value: 10 },
+                    { label: '20', value: 20 },
+                    { label: '50', value: 50 }
+                  ]}
+                  value={limit} 
+                  onChange={(val) => setLimit(Number(val))}
+                  className="ml-2"
+                  dropUp={true}
+                />
+              </div>
             </div>
             
             <div className="flex gap-2">
