@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import img from "./sairam campus.jpg";
-import logo from "./Sairam-instuition.png"
+
+import Logo from "../../component/Logo";
 import api from "../../utils/api";
 
 const Login = () => {
@@ -85,7 +86,7 @@ const Login = () => {
           {/* Header & Logo */}
           <div className="text-center">
             <div className="mx-auto h-20 w-auto flex items-center justify-center mb-6">
-              <img src={logo} alt="Sairam Logo" className="h-full object-contain" />
+              <Logo className="h-full object-contain" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Sign in to your account

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, FileEdit, BellRing, Search , MessageSquareWarning } from 'lucide-react';
-import logo from '../auth/Sairam-instuition.png';
+import Logo from '../../component/Logo';
 import { useNotification } from '../../context/NotificationContext';
 
 const STUDENT_NAV_ITEMS = [
@@ -74,7 +74,7 @@ const StudentLayout = () => {
         <header className="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
           {/* Left: Logo */}
           <div className="flex items-center">
-            <img src={logo} alt="Sairam Logo" className="h-18 w-auto object-contain" />
+            <Logo className="h-18 w-auto object-contain" />
           </div>
 
           {/* Right: Student Profile */}
