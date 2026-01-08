@@ -9,6 +9,7 @@ import StudentList from './app/admin/StudentList';
 import LeaveManagement from './app/admin/LeaveManagement';
 import Notification from './app/student/notification/Notification';
 import { NotificationProvider } from './context/NotificationContext';
+import { ToastProvider } from './context/ToastContext';
 import Complaints from './app/student/complaints/Complaints';
 import ComplaintDetails from './app/student/complaints/ComplaintDetails';
 import StudentForm from './app/admin/StudentForm';
@@ -24,11 +25,15 @@ import AdminDashboard from './app/admin/AdminDashboard';
 const App = () => {
   return (
     <Router>
-      <NotificationProvider>
+      <ToastProvider>
         <Routes>
           <Route path="/" element={<Login />} />
 
-          <Route path="/student" element={<StudentLayout />}>
+          <Route path="/student" element={
+            <NotificationProvider>
+              <StudentLayout />
+            </NotificationProvider>
+          }>
             <Route index element={<StudentDashboard />} />
             <Route path="outpass" element={<Outpass />} />
             <Route path="notification" element={<Notification />} />
@@ -53,7 +58,7 @@ const App = () => {
             <Route path="notices/edit/:id" element={<NoticeForm />} />
           </Route>
         </Routes>
-      </NotificationProvider>
+      </ToastProvider>
     </Router>
   );
 }
