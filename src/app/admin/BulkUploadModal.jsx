@@ -130,6 +130,8 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess, type = 'student' }) => {
 
         setProgress({ total: jsonData.length, current: 0, success: 0, failed: 0 });
 
+        let failedCount = 0;
+
         for (let i = 0; i < jsonData.length; i++) {
           const row = jsonData[i];
           setProgress(prev => ({ ...prev, current: i + 1 }));
@@ -145,13 +147,18 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess, type = 'student' }) => {
           } catch (err) {
             console.error(err);
             const errorMsg = err.response?.data?.message || err.message || 'Unknown error';
+            failedCount++;
             setProgress(prev => ({ ...prev, failed: prev.failed + 1 }));
             setLogs(prev => [...prev, { type: 'error', message: `Row ${i + 2}: Failed - ${errorMsg}` }]);
           }
         }
         
-        if (onSuccess) onSuccess(); 
-        showToast(`${config.title} completed`, 'success');
+        if (failedCount === 0) {
+            if (onSuccess) onSuccess(); 
+            showToast(`${config.title} completed successfully`, 'success');
+        } else {
+            showToast(`${config.title} completed with ${failedCount} errors`, 'warning');
+        }
 
       } catch (err) {
         setLogs(prev => [...prev, { type: 'error', message: `Critical Error: ${err.message}` }]);
