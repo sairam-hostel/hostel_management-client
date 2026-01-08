@@ -5,7 +5,8 @@ const Toast = ({ message, type, onClose }) => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        requestAnimationFrame(() => setIsVisible(true));
+        const rafId = requestAnimationFrame(() => setIsVisible(true));
+        return () => cancelAnimationFrame(rafId);
     }, []);
 
     const handleClose = () => {
