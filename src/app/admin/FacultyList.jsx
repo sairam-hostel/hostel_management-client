@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Mail, Phone, Edit, Trash2, Shield, MapPin } from 'lucide-react';
+import { Mail, Phone, Edit, Trash2, Shield, MapPin, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ApiTableManager from '../../component/ApiTableManager';
 import api from '../../utils/api';
 import ConfirmationModal from '../../component/ConfirmationModal';
+import BulkUploadModal from './BulkUploadModal';
 
 const FacultyList = () => {
   const navigate = useNavigate();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, facultyId: null });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const handleEdit = (id) => {
     navigate(`/admin/faculty/edit/${id}`);
@@ -118,7 +120,14 @@ const FacultyList = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end gap-3 mb-4">
+        <button
+          onClick={() => setIsUploadModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+        >
+          <Upload size={16} />
+          Bulk Upload
+        </button>
         <button 
           onClick={() => navigate('/admin/create-faculty')}
           className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
@@ -142,6 +151,16 @@ const FacultyList = () => {
         title="Delete Faculty"
         message="Are you sure you want to delete this faculty member? This action cannot be undone."
         isLoading={isDeleting}
+      />
+
+      <BulkUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSuccess={() => {
+          setIsUploadModalOpen(false);
+          window.location.reload(); 
+        }}
+        type="faculty"
       />
     </div>
   );
