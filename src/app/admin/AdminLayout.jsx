@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, FileCheck, LogOut, UserPlus, Users, Bell, Menu, X } from 'lucide-react';
-import logo from '../auth/Sairam-instuition.png';
+
+import Logo from '../../component/Logo';
 import ConfirmationModal from '../../component/ConfirmationModal';
 
 const ADMIN_NAV_ITEMS = [
@@ -121,7 +122,7 @@ const AdminLayout = () => {
             >
               <Menu size={24} />
             </button>
-             <img src={logo} alt="Sairam Logo" className="h-8 md:h-12 w-auto object-contain" />
+             <Logo className="h-8 md:h-12 w-auto object-contain" />
              <div className="hidden md:block h-8 w-px bg-gray-200 mx-2"></div>
              <h1 className="text-lg md:text-xl font-semibold text-gray-800">
               {ADMIN_NAV_ITEMS.find(item => isActive(item.path))?.label || 'Dashboard'}
