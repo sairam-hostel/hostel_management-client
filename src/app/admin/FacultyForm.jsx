@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft, Loader, Eye, EyeOff } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import api from '../../utils/api';
 import InputField from '../../component/InputField';
 import SelectField from '../../component/SelectField';
@@ -9,6 +10,7 @@ import { DEPARTMENTS } from '../../utils/constants';
 const FacultyForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const isEditMode = Boolean(id);
 
   const [loading, setLoading] = useState(false);
@@ -136,14 +138,17 @@ const FacultyForm = () => {
       if (isEditMode) {
         delete payload.password; // Don't update password on edit
         await api.put(`/bf1/accounts/faculty/${id}`, payload);
+        showToast('Faculty updated successfully', 'success');
       } else {
         await api.post('/bf1/accounts/faculty/register', payload);
+        showToast('Faculty added successfully', 'success');
       }
       navigate('/admin/faculty');
     } catch (err) {
       console.error('Error saving faculty:', err);
       const message = err.response?.data?.message || err.message || 'Failed to save faculty';
       setError(message);
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -188,11 +193,7 @@ const FacultyForm = () => {
         </button>
       </div>
 
-      {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm border border-red-100 shrink-0">
-          {error}
-        </div>
-      )}
+
 
       {/* Scrollable Form Container */}
       <div className="flex-1 overflow-y-auto pr-2 pb-4">

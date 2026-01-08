@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MoreVertical, Edit, Trash2, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
 import ApiTableManager from '../../component/ApiTableManager';
 import api from '../../utils/api';
 import ConfirmationModal from '../../component/ConfirmationModal';
@@ -8,6 +9,7 @@ import BulkUploadModal from './BulkUploadModal';
 
 const StudentList = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, studentId: null });
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -25,10 +27,11 @@ const StudentList = () => {
     setIsDeleting(true);
     try {
       await api.delete(`/bf1/accounts/students/${deleteModal.studentId}`);
+      showToast('Student deleted successfully', 'success');
       window.location.reload(); 
     } catch (err) {
       console.error('Failed to delete student', err);
-      alert('Failed to delete student');
+      showToast('Failed to delete student', 'error');
     } finally {
       setIsDeleting(false);
       setDeleteModal({ isOpen: false, studentId: null });

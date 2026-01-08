@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, Edit, Trash2, Shield, MapPin, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
 import ApiTableManager from '../../component/ApiTableManager';
 import api from '../../utils/api';
 import ConfirmationModal from '../../component/ConfirmationModal';
@@ -8,6 +9,7 @@ import BulkUploadModal from './BulkUploadModal';
 
 const FacultyList = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, facultyId: null });
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -25,10 +27,11 @@ const FacultyList = () => {
     setIsDeleting(true);
     try {
       await api.delete(`/bf1/accounts/faculty/${deleteModal.facultyId}`);
+      showToast('Faculty deleted successfully', 'success');
       window.location.reload(); 
     } catch (err) {
       console.error('Failed to delete faculty', err);
-      alert('Failed to delete faculty');
+      showToast('Failed to delete faculty', 'error');
     } finally {
       setIsDeleting(false);
       setDeleteModal({ isOpen: false, facultyId: null });

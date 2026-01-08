@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Upload, Download, FileSpreadsheet, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { useToast } from '../../context/ToastContext';
 import api from '../../utils/api';
 
 const UPLOAD_CONFIG = {
@@ -85,6 +86,7 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess, type = 'student' }) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ total: 0, current: 0, success: 0, failed: 0 });
   const [logs, setLogs] = useState([]);
+  const { showToast } = useToast();
 
   const config = UPLOAD_CONFIG[type] || UPLOAD_CONFIG.student;
 
@@ -149,9 +151,11 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess, type = 'student' }) => {
         }
         
         if (onSuccess) onSuccess(); 
+        showToast(`${config.title} completed`, 'success');
 
       } catch (err) {
         setLogs(prev => [...prev, { type: 'error', message: `Critical Error: ${err.message}` }]);
+        showToast('Critical Error in Upload', 'error');
       } finally {
         setUploading(false);
       }

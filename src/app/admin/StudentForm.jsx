@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft, Loader, Upload, Eye, EyeOff } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import api from '../../utils/api';
 import InputField from '../../component/InputField';
 import SelectField from '../../component/SelectField';
@@ -9,6 +10,7 @@ import { DEPARTMENTS } from '../../utils/constants';
 const StudentForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const isEditMode = Boolean(id);
 
   const [loading, setLoading] = useState(false);
@@ -103,9 +105,11 @@ const StudentForm = () => {
         // Update
         // Use 'students' plural
         await api.put(`/bf1/accounts/students/${id}`, formData);
+        showToast('Student updated successfully', 'success');
       } else {
         // Create
         await api.post('/bf1/accounts/students/register', formData);
+        showToast('Student added successfully', 'success');
       }
       navigate('/admin'); // Redirect to list
     } catch (err) {
@@ -113,6 +117,7 @@ const StudentForm = () => {
       // Try to extract useful error message from API response
       const message = err.response?.data?.message || err.message || 'Failed to save student';
       setError(message);
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -157,11 +162,7 @@ const StudentForm = () => {
         </button>
       </div>
 
-      {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm border border-red-100 shrink-0">
-          {error}
-        </div>
-      )}
+
 
       {/* Scrollable Form Container */}
       <div className="flex-1 overflow-y-auto pr-2 pb-4">
