@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { Mail, Phone, MoreVertical, Edit, Trash2, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ApiTableManager from '../../component/ApiTableManager';
 import api from '../../utils/api';
 import ConfirmationModal from '../../component/ConfirmationModal';
+import BulkUploadModal from './BulkUploadModal';
 
 const StudentList = () => {
   const navigate = useNavigate();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, studentId: null });
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleEdit = (id) => {
@@ -113,7 +115,14 @@ const StudentList = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-4 gap-3">
+        <button 
+          onClick={() => setIsUploadModalOpen(true)}
+          className="bg-white text-purple-600 border border-purple-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-50 transition-colors flex items-center gap-2"
+        >
+          <Upload size={16} />
+          Upload Excel
+        </button>
         <button 
           onClick={() => navigate('/admin/create-student')}
           className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
@@ -137,6 +146,15 @@ const StudentList = () => {
         title="Delete Student"
         message="Are you sure you want to delete this student? This action cannot be undone and will permanently remove the student's data and access."
         isLoading={isDeleting}
+      />
+
+      <BulkUploadModal 
+        isOpen={isUploadModalOpen} 
+        onClose={() => setIsUploadModalOpen(false)}
+        onSuccess={() => {
+          setIsUploadModalOpen(false);
+          window.location.reload(); 
+        }}
       />
     </div>
   );
