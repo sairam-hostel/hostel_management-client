@@ -24,11 +24,14 @@ import AdminDashboard from './app/admin/AdminDashboard';
 const App = () => {
   return (
     <Router>
-      <NotificationProvider>
         <Routes>
           <Route path="/" element={<Login />} />
 
-          <Route path="/student" element={<StudentLayout />}>
+          <Route path="/student" element={
+            <NotificationProvider>
+              <StudentLayout />
+            </NotificationProvider>
+          }>
             <Route index element={<StudentDashboard />} />
             <Route path="outpass" element={<Outpass />} />
             <Route path="notification" element={<Notification />} />
@@ -53,7 +56,6 @@ const App = () => {
             <Route path="notices/edit/:id" element={<NoticeForm />} />
           </Route>
         </Routes>
-      </NotificationProvider>
     </Router>
   );
 }

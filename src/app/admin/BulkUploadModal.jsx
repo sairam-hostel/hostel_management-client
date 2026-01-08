@@ -18,7 +18,7 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess }) => {
         email: "john@example.com",
         roll_number: "21IT001",
         register_number: "810021205001",
-        department: "IT",
+        department: "Information Technology (IT)",
         year: "3",
         section: "A",
         batch: "2021-2025",

@@ -4,6 +4,7 @@ import { Save, ArrowLeft, Loader, Paperclip, X } from 'lucide-react';
 import api from '../../utils/api';
 import InputField from '../../component/InputField';
 import SelectField from '../../component/SelectField';
+import { DEPARTMENTS } from '../../utils/constants';
 
 const NoticeForm = () => {
   const { id } = useParams();
@@ -212,7 +213,14 @@ const NoticeForm = () => {
 
         <SectionHeader title="Target Audience" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <InputField label="Target Department" name="target_department" value={formData.target_department} onChange={handleChange} placeholder="Use 'all' for everyone" />
+           <SelectField 
+              label="Target Department" 
+              name="target_department" 
+              options={["all", ...DEPARTMENTS]} 
+              value={formData.target_department} 
+              onChange={handleChange} 
+              searchable
+           />
            <InputField label="Target Course" name="target_course" value={formData.target_course} onChange={handleChange} placeholder="e.g. BTech" />
            <InputField label="Target Year" name="target_year" value={formData.target_year} onChange={handleChange} placeholder="e.g. 1st, 2nd, all" />
            <SelectField 

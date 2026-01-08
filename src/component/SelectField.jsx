@@ -1,7 +1,7 @@
 import React from 'react';
 import CustomDropdown from './CustomDropdown';
 
-const SelectField = ({ label, name, value, onChange, options, required = false, className = "", ...props }) => {
+const SelectField = ({ label, name, value, onChange, options, required = false, className = "", searchable = false, ...props }) => {
   
   // Convert simple string options to { label, value } format
   const formattedOptions = options.map(opt => {
@@ -30,6 +30,7 @@ const SelectField = ({ label, name, value, onChange, options, required = false, 
         value={value}
         onChange={handleDropdownChange}
         placeholder={`Select ${label}`}
+        searchable={searchable}
       />
     </div>
   );

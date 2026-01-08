@@ -4,6 +4,7 @@ import { Save, ArrowLeft, Loader, Upload, Eye, EyeOff } from 'lucide-react';
 import api from '../../utils/api';
 import InputField from '../../component/InputField';
 import SelectField from '../../component/SelectField';
+import { DEPARTMENTS } from '../../utils/constants';
 
 const StudentForm = () => {
   const { id } = useParams();
@@ -199,7 +200,7 @@ const StudentForm = () => {
 
         <SectionHeader title="Academic Information" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <InputField label="Department" name="department" value={formData.department} onChange={handleChange} required />
+          <SelectField label="Department" name="department" options={DEPARTMENTS} value={formData.department} onChange={handleChange} required searchable />
           <SelectField label="Year" name="year" options={["1", "2", "3", "4", "5"]} value={formData.year} onChange={handleChange} required />
           <InputField label="Section" name="section" value={formData.section} onChange={handleChange} />
           <InputField label="School Name" name="school_name" value={formData.school_name} onChange={handleChange} />
