@@ -1,6 +1,21 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
+/**
+ * ConfirmationModal Component
+ * 
+ * A reusable modal component for confirming user actions.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Whether the modal is currently open.
+ * @param {Function} props.onClose - Callback function to close the modal.
+ * @param {Function} props.onConfirm - Callback function when the confirm button is clicked.
+ * @param {string} [props.title] - Title of the modal.
+ * @param {string} [props.message] - Message body of the modal.
+ * @param {boolean} [props.isLoading] - Whether a loading state should be shown on the confirm button.
+ * @returns {JSX.Element|null} The rendered ConfirmationModal or null if not open.
+ */
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, isLoading }) => {
   if (!isOpen) return null;
 

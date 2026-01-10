@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 
+/**
+ * Toast Component
+ * 
+ * A toast notification component for displaying ephemeral messages.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {string} props.message - The message to display.
+ * @param {string} props.type - The type of toast ('success', 'error', 'info', 'warning').
+ * @param {Function} props.onClose - Callback function to close the toast.
+ * @returns {JSX.Element} The rendered Toast component.
+ */
 const Toast = ({ message, type, onClose }) => {
     const [isVisible, setIsVisible] = useState(false);
 
