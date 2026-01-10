@@ -6,6 +6,12 @@ import CustomDropdown from './CustomDropdown';
 
 
 // Simple debounce utility if lodash is not installed or to keep it light
+/**
+ * Custom hook for debouncing values.
+ * @param {any} value - The value to debounce.
+ * @param {number} delay - The delay in milliseconds.
+ * @returns {any} The debounced value.
+ */
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -19,6 +25,20 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
+/**
+ * ApiTableManager Component
+ * 
+ * A reusable table component that handles server-side pagination, searching, and data fetching.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {string} props.fetchUrl - The API endpoint URL to fetch data from.
+ * @param {Array<Object>} props.columns - Array of column definitions.
+ * @param {Function} [props.actions] - Render prop for action buttons for each row.
+ * @param {string} [props.title="List"] - Title of the table section.
+ * @param {string} [props.searchPlaceholder="Search..."] - Placeholder text for the search input.
+ * @returns {JSX.Element} The rendered ApiTableManager component.
+ */
 const ApiTableManager = ({ 
   fetchUrl, 
   columns, 

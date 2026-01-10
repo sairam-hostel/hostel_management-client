@@ -1,5 +1,17 @@
 import React from 'react';
 
+/**
+ * TableManager Component
+ * 
+ * A reusable table component for displaying data in a tabular format.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Array<Object>} props.columns - Array of column definitions.
+ * @param {Array<Object>} props.data - Array of data objects to display.
+ * @param {Function} [props.actions] - Render prop for action buttons for each row.
+ * @returns {JSX.Element} The rendered TableManager component.
+ */
 const TableManager = ({ columns, data, actions }) => {
   return (
     <div className="overflow-x-auto">

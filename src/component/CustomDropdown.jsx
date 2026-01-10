@@ -1,6 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check, Search } from 'lucide-react';
 
+/**
+ * CustomDropdown Component
+ * 
+ * A customizable dropdown component with support for searching and different layouts.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Array<{label: string, value: any}>} props.options - List of options for the dropdown.
+ * @param {any} props.value - The currently selected value.
+ * @param {Function} props.onChange - Callback function when an option is selected. Returns the value.
+ * @param {string} [props.placeholder="Select..."] - Placeholder text when no value is selected.
+ * @param {React.ElementType} [props.icon] - Optional icon component to display in the trigger button.
+ * @param {string} [props.className=""] - Additional CSS classes.
+ * @param {boolean} [props.dropUp=false] - Whether the dropdown should open upwards.
+ * @param {boolean} [props.searchable=false] - Whether to show a search input within the dropdown menu.
+ * @returns {JSX.Element} The rendered CustomDropdown component.
+ */
 const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", icon: Icon, className = "", dropUp = false, searchable = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
