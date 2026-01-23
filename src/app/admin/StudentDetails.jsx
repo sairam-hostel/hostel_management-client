@@ -41,7 +41,7 @@ const StudentDetails = () => {
           onClick={() => navigate('/admin/students')}
           className="text-purple-600 hover:text-purple-800 flex items-center gap-2"
         >
-          <ArrowLeft size={16} /> Back to List
+          <ArrowLeft size={16}/> Back to List
         </button>
       </div>
     );
