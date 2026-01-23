@@ -16,7 +16,7 @@ import { AlertTriangle, X } from 'lucide-react';
  * @param {boolean} [props.isLoading] - Whether a loading state should be shown on the confirm button.
  * @returns {JSX.Element|null} The rendered ConfirmationModal or null if not open.
  */
-const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, isLoading }) => {
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, isLoading, confirmText, confirmColor }) => {
   if (!isOpen) return null;
 
   return (
@@ -39,9 +39,9 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, isLoadi
 
         {/* Content */}
         <div className="p-6">
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <div className="text-gray-600 text-sm leading-relaxed">
             {message || 'Are you sure you want to proceed? This action cannot be undone.'}
-          </p>
+          </div>
         </div>
 
         {/* Footer */}
@@ -56,9 +56,9 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, isLoadi
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm transition-colors disabled:opacity-70 flex items-center gap-2"
+            className={`px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm transition-colors disabled:opacity-70 flex items-center gap-2 ${confirmColor || 'bg-red-600 hover:bg-red-700'}`}
           >
-            {isLoading ? 'Processing...' : 'Confirm'}
+            {isLoading ? 'Processing...' : (confirmText || 'Confirm')}
           </button>
         </div>
       </div>

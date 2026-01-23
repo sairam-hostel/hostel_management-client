@@ -4,10 +4,10 @@ import { Eye, CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
 import ApiTableManager from '../../component/ApiTableManager';
 
 const STATUS_CONFIG = {
-  'Pending': { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
+  'pending': { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
   'in_progress': { color: 'bg-blue-100 text-blue-800', icon: AlertCircle },
   'resolved': { color: 'bg-green-100 text-green-800', icon: CheckCircle },
-  'Rejected': { color: 'bg-red-100 text-red-800', icon: XCircle },
+  'rejected': { color: 'bg-red-100 text-red-800', icon: XCircle },
 };
 
 const ComplaintList = () => {
@@ -35,13 +35,14 @@ const ComplaintList = () => {
     {
       header: 'Status',
       render: (complaint) => {
-        const statusConfig = STATUS_CONFIG[complaint.status] || STATUS_CONFIG['Pending'];
+        const normalizedStatus = (complaint.status || 'pending').toLowerCase();
+        const statusConfig = STATUS_CONFIG[normalizedStatus] || STATUS_CONFIG['pending'];
         const Icon = statusConfig.icon;
         
         return (
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium gap-1 ${statusConfig.color}`}>
             <Icon size={12} />
-            <span className="capitalize">{complaint.status?.replace('_', ' ') || 'Pending'}</span>
+            <span className="capitalize">{normalizedStatus.replace('_', ' ')}</span>
           </span>
         );
       },

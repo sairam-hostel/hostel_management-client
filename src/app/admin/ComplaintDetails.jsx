@@ -111,12 +111,24 @@ const ComplaintDetails = () => {
         <div className="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-start">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide
-                ${complaint.status === 'resolved' ? 'bg-green-100 text-green-700' : 
-                  complaint.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 
-                  'bg-yellow-100 text-yellow-700'}`}>
-                {complaint.status?.replace('_', ' ')}
-              </span>
+            <div className="flex items-center gap-3 mb-2">
+              {(() => {
+                const normalizedStatus = (complaint.status || 'unknown').toLowerCase();
+                const badgeColor = {
+                  'resolved': 'bg-green-100 text-green-700',
+                  'in_progress': 'bg-blue-100 text-blue-700',
+                  'rejected': 'bg-red-100 text-red-700',
+                  'pending': 'bg-yellow-100 text-yellow-700'
+                }[normalizedStatus] || 'bg-gray-100 text-gray-700';
+                
+                return (
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide ${badgeColor}`}>
+                     {normalizedStatus.replace('_', ' ')}
+                  </span>
+                );
+              })()}
+              <span className="text-gray-400 text-sm">#{complaint._id?.slice(-6) || 'ID'}</span>
+            </div>
               <span className="text-gray-400 text-sm">#{complaint._id?.slice(-6) || 'ID'}</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-800">{complaint.title}</h1>
@@ -153,8 +165,8 @@ const ComplaintDetails = () => {
                </div>
             )}
 
-            {/* Resolution Info (if resolved) */}
-            {complaint.status === 'resolved' && (
+             {/* Resolution Info (if resolved) */}
+            {(complaint.status?.toLowerCase() === 'resolved') && (
               <div className="bg-green-50 border border-green-100 rounded-lg p-4 mt-6">
                 <h3 className="text-green-800 font-semibold mb-2 flex items-center gap-2">
                   <CheckCircle size={18} /> Resolution Details
@@ -167,7 +179,7 @@ const ComplaintDetails = () => {
             )}
             
              {/* Progress Info (if in progress) */}
-             {complaint.status === 'in_progress' && (
+             {(complaint.status?.toLowerCase() === 'in_progress') && (
               <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mt-6">
                 <h3 className="text-blue-800 font-semibold mb-2 flex items-center gap-2">
                   <Loader2 size={18} /> Status Update
@@ -175,6 +187,18 @@ const ComplaintDetails = () => {
                 <div className="space-y-2 text-sm text-blue-900">
                   <p><span className="font-medium">Current Status:</span> In Progress</p>
                   <p><span className="font-medium">Faculty Note:</span> {complaint.faculty_note}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Rejection Info (if rejected) */}
+            {(complaint.status?.toLowerCase() === 'rejected') && (
+              <div className="bg-red-50 border border-red-100 rounded-lg p-4 mt-6">
+                <h3 className="text-red-800 font-semibold mb-2 flex items-center gap-2">
+                  <AlertCircle size={18} /> Complaint Rejected
+                </h3>
+                <div className="space-y-2 text-sm text-red-900">
+                   <p><span className="font-medium">Faculty Note:</span> {complaint.faculty_note || 'No additional details provided.'}</p>
                 </div>
               </div>
             )}
@@ -209,30 +233,41 @@ const ComplaintDetails = () => {
             <div className="pt-6 border-t border-gray-200">
                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Actions</h3>
                <div className="space-y-3">
-                 {complaint.status !== 'resolved' && (
-                   <>
-                    {complaint.status !== 'in_progress' && (
-                      <button 
-                        onClick={handleMarkAsSeen}
-                        disabled={isSubmitting}
-                        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition font-medium text-sm disabled:opacity-50"
-                      >
-                        <Eye size={16} /> Mark as Seen
-                      </button>
-                    )}
-                    
-                    <button 
-                      onClick={() => setIsResolveModalOpen(true)}
-                      disabled={isSubmitting}
-                      className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition font-medium text-sm disabled:opacity-50"
-                    >
-                      <CheckCircle size={16} /> Resolve Complaint
-                    </button>
-                   </>
-                 )}
-                 {complaint.status === 'resolved' && (
-                   <p className="text-center text-sm text-gray-500 italic">This complaint has been resolved.</p>
-                 )}
+                 {(() => {
+                   const normalizedStatus = (complaint.status || 'unknown').toLowerCase();
+                   const isResolved = normalizedStatus === 'resolved';
+                   const isRejected = normalizedStatus === 'rejected';
+                   const isInProgress = normalizedStatus === 'in_progress';
+
+                   if (isResolved) {
+                      return <p className="text-center text-sm text-gray-500 italic">This complaint has been resolved.</p>;
+                   }
+                   if (isRejected) {
+                      return <p className="text-center text-sm text-gray-500 italic">This complaint has been rejected.</p>;
+                   }
+
+                   return (
+                     <>
+                        {!isInProgress && (
+                           <button 
+                             onClick={handleMarkAsSeen}
+                             disabled={isSubmitting}
+                             className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition font-medium text-sm disabled:opacity-50"
+                           >
+                             <Eye size={16} /> Mark as Seen
+                           </button>
+                        )}
+                        
+                        <button 
+                          onClick={() => setIsResolveModalOpen(true)}
+                          disabled={isSubmitting}
+                          className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition font-medium text-sm disabled:opacity-50"
+                        >
+                          <CheckCircle size={16} /> Resolve Complaint
+                        </button>
+                     </>
+                   );
+                 })()}
                </div>
             </div>
           </div>
