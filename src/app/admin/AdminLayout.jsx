@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileCheck, LogOut, UserPlus, Users, Bell, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileCheck, LogOut, UserPlus, Users, Bell, Menu, X, MessageSquareWarning } from 'lucide-react';
 
 import Logo from '../../component/Logo';
 import ConfirmationModal from '../../component/ConfirmationModal';
@@ -30,6 +30,11 @@ const ADMIN_NAV_ITEMS = [
     path: '/admin/notices',
     label: 'Notices',
     icon: Bell,
+  },
+  {
+    path: '/admin/complaints',
+    label: 'Complaints',
+    icon: MessageSquareWarning,
   },
 ];
 
