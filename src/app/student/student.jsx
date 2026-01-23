@@ -1,8 +1,9 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileEdit, BellRing, Search , MessageSquareWarning } from 'lucide-react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, FileEdit, BellRing, Search , MessageSquareWarning, LogOut } from 'lucide-react';
 import Logo from '../../component/Logo';
 import { useNotification } from '../../context/NotificationContext';
+import ConfirmationModal from '../../component/ConfirmationModal';
 
 const STUDENT_NAV_ITEMS = [
   {
@@ -30,8 +31,15 @@ const STUDENT_NAV_ITEMS = [
 
 const StudentLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
   const isActive = (path) => location.pathname === path;
   const { unreadCount } = useNotification();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -62,6 +70,13 @@ const StudentLayout = () => {
         </nav>
 
         <div className="mt-auto w-full px-2 pb-4">
+          <button
+            onClick={() => setIsLogoutModalOpen(true)}
+            className="flex flex-col items-center justify-center w-full py-3 rounded-lg transition-all duration-200 text-xs font-medium text-purple-200 hover:bg-purple-600 hover:text-white"
+          >
+            <LogOut size={22} className="text-purple-200" />
+            <span className="mt-1 text-center">Logout</span>
+          </button>
           <p className="text-[10px] text-center text-gray-200 py-2 border-t border-purple-600">
             Student
           </p>
@@ -96,6 +111,14 @@ const StudentLayout = () => {
           <Outlet />
         </main>
       </div>
+
+       <ConfirmationModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to log out? You will need to sign in again to access the student dashboard."
+      />
     </div>
   );
 };
