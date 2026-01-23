@@ -21,6 +21,8 @@ import NoticeForm from './app/admin/NoticeForm';
 import NoticeDetails from './app/admin/NoticeDetails';
 import StudentDetails from './app/admin/StudentDetails';
 import AdminDashboard from './app/admin/AdminDashboard';
+import ComplaintList from './app/admin/ComplaintList';
+import AdminComplaintDetails from './app/admin/ComplaintDetails';
 
 const App = () => {
   return (
@@ -56,6 +58,8 @@ const App = () => {
             <Route path="create-notice" element={<NoticeForm />} />
             <Route path="notices/view/:id" element={<NoticeDetails />} />
             <Route path="notices/edit/:id" element={<NoticeForm />} />
+            <Route path="complaints" element={<ComplaintList />} />
+            <Route path="complaints/:id" element={<AdminComplaintDetails />} />
           </Route>
         </Routes>
       </ToastProvider>

@@ -1,6 +1,23 @@
 import React from 'react';
 import CustomDropdown from './CustomDropdown';
 
+/**
+ * SelectField Component
+ * 
+ * A form field wrapper around the CustomDropdown component, providing a standard label and layout.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {string} props.label - Label text for the select field.
+ * @param {string} props.name - Name attribute, used for the synthetic event.
+ * @param {any} props.value - Currently selected value.
+ * @param {Function} props.onChange - Callback function, receives a synthetic event { target: { name, value } }.
+ * @param {Array<string|{label: string, value: any}>} props.options - List of options.
+ * @param {boolean} [props.required=false] - Whether the field is required.
+ * @param {string} [props.className=""] - Additional CSS classes.
+ * @param {boolean} [props.searchable=false] - Whether the dropdown should include a search input.
+ * @returns {JSX.Element} The rendered SelectField component.
+ */
 const SelectField = ({ label, name, value, onChange, options, required = false, className = "", searchable = false, ...props }) => {
   
   // Convert simple string options to { label, value } format
