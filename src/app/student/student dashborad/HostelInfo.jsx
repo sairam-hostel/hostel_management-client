@@ -5,8 +5,9 @@ const HostelInfo = ({ data }) => {
   const hostel = {
     name: data?.hostel_block || "Boys Hostel 1",
     roomNumber: data?.room_number || "305",
-    messPass: "Non-Veg", // Default/Hardcoded as not in API
+    messPass: data?.food_type || "Non-Veg", 
     bedNumber: data?.bed_number,
+    floor: data?.floor,
     wardenName: data?.warden_name
   };
 
@@ -22,7 +23,7 @@ const HostelInfo = ({ data }) => {
         <h2 className="text-lg font-bold text-gray-800">Hostel Details</h2>
       </div>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
 
         {/* Hostel Name */}
         <div>
@@ -41,6 +42,13 @@ const HostelInfo = ({ data }) => {
           <div>
             <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Bed Number</p>
             <p className="text-sm font-semibold text-gray-900">{hostel.bedNumber}</p>
+          </div>
+        )}
+
+        {hostel.floor && (
+          <div>
+             <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Floor</p>
+             <p className="text-sm font-semibold text-gray-900">{hostel.floor}</p>
           </div>
         )}
 

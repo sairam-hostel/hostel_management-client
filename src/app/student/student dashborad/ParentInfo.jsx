@@ -35,7 +35,7 @@ const ParentInfo = ({ data }) => {
         {/* Father Details */}
         <div className="flex flex-col">
           <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-3">Father</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-xs text-gray-400 font-medium">Name</p>
               <p className="text-sm font-semibold text-gray-900">{parents.father.name}</p>
@@ -54,7 +54,7 @@ const ParentInfo = ({ data }) => {
         {/* Mother Details */}
         <div className="flex flex-col">
           <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-3">Mother</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-xs text-gray-400 font-medium">Name</p>
               <p className="text-sm font-semibold text-gray-900">{parents.mother.name}</p>
@@ -73,7 +73,7 @@ const ParentInfo = ({ data }) => {
         {/* Guardian Details */}
         <div className="flex flex-col">
           <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-3">Guardian</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-xs text-gray-400 font-medium">Name</p>
               <p className="text-sm font-semibold text-gray-900">{parents.guardian.name}</p>
