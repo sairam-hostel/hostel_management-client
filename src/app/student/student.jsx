@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileEdit, BellRing, Search , MessageSquareWarning, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileEdit, BellRing, Search, MessageSquareWarning, LogOut } from 'lucide-react';
 import Logo from '../../component/Logo';
 import { useNotification } from '../../context/NotificationContext';
 import ConfirmationModal from '../../component/ConfirmationModal';
@@ -59,9 +59,7 @@ const StudentLayout = () => {
               <div className="relative">
                 <Icon size={22} />
                 {label === 'Notification' && unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
+                  <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-purple-700"></span>
                 )}
               </div>
               <span className="mt-1 text-center">{label}</span>
@@ -112,7 +110,7 @@ const StudentLayout = () => {
         </main>
       </div>
 
-       <ConfirmationModal 
+      <ConfirmationModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}

@@ -39,22 +39,23 @@ const useDebounce = (value, delay) => {
  * @param {string} [props.searchPlaceholder="Search..."] - Placeholder text for the search input.
  * @returns {JSX.Element} The rendered ApiTableManager component.
  */
-const ApiTableManager = ({ 
-  fetchUrl, 
-  columns, 
-  actions, 
-  title = "List", 
-  searchPlaceholder = "Search..." 
+const ApiTableManager = ({
+  fetchUrl,
+  dataSource, // New prop for client-side data
+  columns,
+  actions,
+  title = "List",
+  searchPlaceholder = "Search..."
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Pagination State
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
-  
+
   // Search State
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 500);
@@ -63,37 +64,57 @@ const ApiTableManager = ({
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(fetchUrl, {
-        params: {
-          page,
-          limit,
-          search: debouncedSearch
+      if (dataSource) {
+        // Client-side handling
+        let filtered = [...dataSource];
+
+        // Simple search filter
+        if (debouncedSearch) {
+          const lowerSearch = debouncedSearch.toLowerCase();
+          filtered = filtered.filter(item =>
+            Object.values(item).some(val =>
+              String(val).toLowerCase().includes(lowerSearch)
+            )
+          );
         }
-      });
-      
-      const responseData = response.data;
-      
-      // Handle different API response structures if needed, strictly following the one seen:
-      // { success: true, page: 1, limit: 20, total: 2, count: 2, data: [...] }
-      if (responseData.data) {
-        setData(responseData.data);
-        setTotal(responseData.total || responseData.count || 0);
-      } else if (Array.isArray(responseData)) {
-        // Fallback for direct array response
-        setData(responseData);
-        setTotal(responseData.length);
-      } else {
-        setData([]);
-        setTotal(0);
+
+        setTotal(filtered.length);
+
+        // Pagination
+        const start = (page - 1) * limit;
+        const pagedData = filtered.slice(start, start + limit);
+
+        setData(pagedData);
+      } else if (fetchUrl) {
+        // Server-side fetching
+        const response = await api.get(fetchUrl, {
+          params: {
+            page,
+            limit,
+            search: debouncedSearch
+          }
+        });
+
+        const responseData = response.data;
+
+        if (responseData.data) {
+          setData(responseData.data);
+          setTotal(responseData.total || responseData.count || 0);
+        } else if (Array.isArray(responseData)) {
+          setData(responseData);
+          setTotal(responseData.length);
+        } else {
+          setData([]);
+          setTotal(0);
+        }
       }
-      
     } catch (err) {
       console.error('Error fetching table data:', err);
       setError(err.message || 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
-  }, [fetchUrl, page, limit, debouncedSearch]);
+  }, [fetchUrl, dataSource, page, limit, debouncedSearch]);
 
   useEffect(() => {
     fetchData();
@@ -123,7 +144,7 @@ const ApiTableManager = ({
       {/* Header Controls */}
       <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-        
+
         <div className="flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -135,9 +156,9 @@ const ApiTableManager = ({
               className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-full sm:w-64"
             />
           </div>
-          <button 
+          <button
             className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600"
-            onClick={fetchData} 
+            onClick={fetchData}
             title="Refresh"
           >
             <Filter size={18} />
@@ -148,7 +169,7 @@ const ApiTableManager = ({
       {/* Content Area */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-           <Loader className="animate-spin text-purple-600" size={32} />
+          <Loader className="animate-spin text-purple-600" size={32} />
         </div>
       ) : error ? (
         <div className="flex items-center justify-center h-64 text-red-500 gap-2">
@@ -201,22 +222,22 @@ const ApiTableManager = ({
             <div className="flex items-center gap-2">
               <p>Showing {data.length} of {total}</p>
               <div className="w-24">
-                <CustomDropdown 
+                <CustomDropdown
                   options={[
                     { label: '10', value: 10 },
                     { label: '20', value: 20 },
                     { label: '50', value: 50 }
                   ]}
-                  value={limit} 
+                  value={limit}
                   onChange={(val) => setLimit(Number(val))}
                   className="ml-2"
                   dropUp={true}
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-2">
-              <button 
+              <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 flex items-center gap-1"
@@ -224,12 +245,12 @@ const ApiTableManager = ({
                 <ChevronLeft size={16} /> Previous
               </button>
               <span className="flex items-center px-2">Page {page} of {Math.max(1, totalPages)}</span>
-              <button 
+              <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
                 className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 flex items-center gap-1"
               >
-                 Next <ChevronRight size={16} />
+                Next <ChevronRight size={16} />
               </button>
             </div>
           </div>
