@@ -9,6 +9,7 @@ import AdminLayout from './app/admin/AdminLayout';
 import StudentList from './app/admin/StudentList';
 import LeaveManagement from './app/admin/LeaveManagement';
 import Notification from './app/student/notification/Notification';
+import NotificationDetails from './app/student/notification/NotificationDetails';
 import { NotificationProvider } from './context/NotificationContext';
 import { ToastProvider } from './context/ToastContext';
 import Complaints from './app/student/complaints/Complaints';
@@ -32,6 +33,17 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login />} />
 
+          <Route path="/student" element={
+            <NotificationProvider>
+              <StudentLayout />
+            </NotificationProvider>
+          }>
+            <Route index element={<StudentDashboard />} />
+            <Route path="outpass" element={<Outpass />} />
+            <Route path="notification" element={<Notification />} />
+            <Route path="notification/:id" element={<NotificationDetails />} />
+            <Route path="complaints" element={<Complaints />} />
+            <Route path="complaints/:id" element={<ComplaintDetails />} />
           <Route element={<ProtectedRoute allowedRole="student" />}>
             <Route path="/student" element={
               <NotificationProvider>
