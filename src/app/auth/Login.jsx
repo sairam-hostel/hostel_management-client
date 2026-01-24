@@ -27,6 +27,7 @@ const Login = () => {
         if (data.success) {
           console.log("Login successful:", data);
           localStorage.setItem('token', data.data.access_token);
+          localStorage.setItem('role', 'admin');
           navigate("/admin");
         } else {
           setError(data.message || "Login failed.");
@@ -50,6 +51,7 @@ const Login = () => {
 
         if (token) {
           localStorage.setItem('token', token);
+          localStorage.setItem('role', 'student');
           navigate("/student");
         } else {
           console.error("Token not found in response", data);
