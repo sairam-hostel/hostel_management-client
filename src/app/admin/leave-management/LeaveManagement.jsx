@@ -1,163 +1,190 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, Clock, Calendar, FileText } from 'lucide-react';
-
-const MOCK_LEAVE_REQUESTS = [
-  {
-    id: 1,
-    studentName: 'Priya Sharma',
-    rollNo: '21CS045',
-    type: 'Medical Leave',
-    fromDate: '2023-11-15',
-    toDate: '2023-11-18',
-    reason: 'Suffering from viral fever. Doctor advised rest.',
-    status: 'Pending',
-    appliedOn: '2023-11-14',
-  },
-  {
-    id: 2,
-    studentName: 'Arjun Kumar',
-    rollNo: '21IT001',
-    type: 'Outpass',
-    fromDate: '2023-11-20',
-    toDate: '2023-11-20',
-    reason: 'Going to buy project components.',
-    status: 'Pending',
-    appliedOn: '2023-11-19',
-  },
-  {
-    id: 3,
-    studentName: 'Sneha Gupta',
-    rollNo: '20EC089',
-    type: 'Home Visit',
-    fromDate: '2023-11-25',
-    toDate: '2023-11-27',
-    reason: 'Family function at home.',
-    status: 'Approved',
-    appliedOn: '2023-11-10',
-  },
-  {
-    id: 4,
-    studentName: 'Rahul Verma',
-    rollNo: '22ME012',
-    type: 'Medical Leave',
-    fromDate: '2023-11-10',
-    toDate: '2023-11-12',
-    reason: 'Dental appointment.',
-    status: 'Rejected',
-    appliedOn: '2023-11-09',
-  },
-];
+import { CheckCircle, XCircle, Clock, Calendar, FileText, AlertTriangle } from 'lucide-react';
+import ApiTableManager from '../../../component/ApiTableManager';
+import api from '../../../utils/api';
+import { useToast } from '../../../context/ToastContext';
+import ApprovalModal from './ApprovalModal';
+import RejectionModal from './RejectionModal';
 
 const LeaveManagement = () => {
-  const [requests, setRequests] = useState(MOCK_LEAVE_REQUESTS);
-  const [filter, setFilter] = useState('Pending');
+  const { showToast } = useToast();
+  const [approvalModal, setApprovalModal] = useState({ isOpen: false, request: null });
+  const [rejectionModal, setRejectionModal] = useState({ isOpen: false, request: null });
+  // We can filter by status in the API if supported, or use the response `status` field.
+  // For now, let's just display the list.
 
-  const handleAction = (id, action) => {
-    setRequests(requests.map(req => 
-      req.id === id ? { ...req, status: action === 'approve' ? 'Approved' : 'Rejected' } : req
-    ));
-  };
-
-  const filteredRequests = requests.filter(req => 
-    filter === 'All' ? true : req.status === filter
-  );
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Approved': return 'bg-green-50 text-green-700 border-green-100';
-      case 'Rejected': return 'bg-red-50 text-red-700 border-red-100';
-      default: return 'bg-yellow-50 text-yellow-700 border-yellow-100';
+  const handleAction = async (request, action) => {
+    if (action === 'approved') {
+        setApprovalModal({ isOpen: true, request });
+        return;
+    }
+    
+    if (action === 'rejected') {
+        setRejectionModal({ isOpen: true, request });
+        return;
     }
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header & Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold text-gray-800">Leave Requests</h2>
-        
-        <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-100">
-          {['Pending', 'Approved', 'Rejected', 'All'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200
-                ${filter === status 
-                  ? 'bg-purple-600 text-white shadow-sm' 
-                  : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              {status}
-            </button>
-          ))}
+  const handleApproveConfirm = async (formData) => {
+    try {
+      const request = approvalModal.request;
+      const id = request.request_id || request._id || request.id;
+      
+      // PATCH endpoint for approval with dates
+      await api.patch(`/bf1/leave-outpass/${id}/approve`, formData);
+      
+      showToast('Request approved successfully', 'success');
+      setApprovalModal({ isOpen: false, request: null });
+      window.location.reload();
+    } catch (err) {
+        console.error('Error approving request:', err);
+        const msg = err.response?.data?.message || 'Failed to approve request';
+        showToast(msg, 'error');
+    }
+  };
+
+  const handleRejectConfirm = async (reason) => {
+    try {
+      const request = rejectionModal.request;
+      const id = request.request_id || request._id || request.id;
+      
+      // PATCH endpoint for rejection with note
+      await api.patch(`/bf1/leave-outpass/${id}/reject`, { admin_note: reason });
+      
+      showToast('Request rejected successfully', 'success');
+      setRejectionModal({ isOpen: false, request: null });
+      window.location.reload();
+    } catch (err) {
+        console.error('Error rejecting request:', err);
+        const msg = err.response?.data?.message || 'Failed to reject request';
+        showToast(msg, 'error');
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'approved': return 'bg-green-100 text-green-700';
+      case 'rejected': return 'bg-red-100 text-red-700';
+      case 'pending': return 'bg-yellow-100 text-yellow-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const columns = [
+    {
+      header: 'Type & Reason',
+      render: (request) => (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${request.type === 'outpass' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+              {request.type}
+            </span>
+          </div>
+          <p className="text-sm font-medium text-gray-900">{request.request_reason || 'No reason'}</p>
+          <div className="text-xs text-gray-500 flex items-center gap-1">
+            <FileText size={10} />
+            {request.place_to_visit || 'N/A'}
+          </div>
         </div>
-      </div>
-
-      {/* Requests Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredRequests.map((request) => (
-          <div key={request.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold">
-                  {request.studentName.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{request.studentName}</h3>
-                  <p className="text-xs text-gray-500">{request.rollNo}</p>
-                </div>
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(request.status)}`}>
-                {request.status}
-              </span>
+      ),
+    },
+    {
+      header: 'Duration',
+      render: (request) => (
+        <div className="text-sm text-gray-600 space-y-1">
+           <div className="flex items-center gap-1">
+             <Calendar size={12} className="text-gray-400"/>
+             <span>From: {new Date(request.from_date).toLocaleDateString()} {new Date(request.from_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+           </div>
+           <div className="flex items-center gap-1">
+             <Calendar size={12} className="text-gray-400"/>
+             <span>To: {new Date(request.to_date).toLocaleDateString()} {new Date(request.to_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+           </div>
+        </div>
+      ),
+    },
+    {
+      header: 'Current Status',
+      render: (request) => (
+         <div className="space-y-1">
+            <div className="flex justify-between items-center gap-2 text-xs">
+               <span className="text-gray-500">Mentor:</span>
+               <span className={`px-1.5 py-0.5 rounded capitalize ${getStatusColor(request.mentor_status || 'pending')}`}>
+                 {request.mentor_status || 'Pending'}
+               </span>
             </div>
-
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FileText size={16} className="text-purple-500" />
-                <span className="font-medium text-gray-900">{request.type}</span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar size={16} className="text-purple-500" />
-                <span>{request.fromDate} <span className="text-gray-400">to</span> {request.toDate}</span>
-              </div>
-
-              <div className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 italic">
-                "{request.reason}"
-              </div>
-              
-              <div className="flex items-center gap-2 text-xs text-gray-400">
-                <Clock size={14} />
-                Applied on {request.appliedOn}
-              </div>
+            <div className="flex justify-between items-center gap-2 text-xs">
+               <span className="text-gray-500">HOD:</span>
+                <span className={`px-1.5 py-0.5 rounded capitalize ${getStatusColor(request.hod_status || 'pending')}`}>
+                 {request.hod_status || 'Pending'}
+               </span>
             </div>
+            <div className="flex justify-between items-center gap-2 text-xs font-semibold">
+               <span className="text-gray-700">Admin:</span>
+                <span className={`px-1.5 py-0.5 rounded capitalize ${getStatusColor(request.admin_status || 'pending')}`}>
+                 {request.admin_status || 'Pending'}
+               </span>
+            </div>
+         </div>
+      )
+    },
+    {
+       header: 'Overall',
+       accessor: 'status',
+       render: (row) => (
+         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(row.status)}`}>
+           {row.status}
+         </span>
+       )
+    }
+  ];
 
-            {request.status === 'Pending' && (
-              <div className="flex gap-3 pt-4 border-t border-gray-100">
-                <button 
-                  onClick={() => handleAction(request.id, 'approve')}
-                  className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors"
-                >
-                  <CheckCircle size={16} /> Approve
-                </button>
-                <button 
-                  onClick={() => handleAction(request.id, 'reject')}
-                  className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-lg text-sm font-medium transition-colors border border-red-200"
-                >
-                  <XCircle size={16} /> Reject
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-
-        {filteredRequests.length === 0 && (
-          <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400">
-            <FileText size={48} className="mb-4 opacity-20" />
-            <p>No {filter.toLowerCase()} requests found</p>
-          </div>
-        )}
+  const actions = (request) => {
+    // Only show actions if admin status is pending
+    if (request.admin_status !== 'pending') return null;
+    
+    return (
+      <div className="flex items-center justify-end gap-2">
+        <button 
+          onClick={() => handleAction(request, 'approved')}
+          className="text-green-600 hover:text-green-800 p-1 rounded hover:bg-green-50"
+          title="Approve"
+        >
+          <CheckCircle size={18} />
+        </button>
+        <button 
+          onClick={() => handleAction(request, 'rejected')}
+          className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50"
+          title="Reject"
+        >
+          <XCircle size={18} />
+        </button>
       </div>
+    );
+  };
+
+  return (
+    <div className="p-6">
+      <ApiTableManager
+        title="Leave & Outpass Requests"
+        fetchUrl="/bf1/leave-outpass"
+        columns={columns}
+        actions={actions}
+        searchPlaceholder="Search by reason..."
+      />
+      
+      <ApprovalModal 
+        isOpen={approvalModal.isOpen}
+        onClose={() => setApprovalModal({ isOpen: false, request: null })}
+        onConfirm={handleApproveConfirm}
+        request={approvalModal.request}
+      />
+
+      <RejectionModal 
+        isOpen={rejectionModal.isOpen}
+        onClose={() => setRejectionModal({ isOpen: false, request: null })}
+        onConfirm={handleRejectConfirm}
+      />
     </div>
   );
 };
