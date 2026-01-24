@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { X, Upload, Download, FileSpreadsheet, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import * as XLSX from 'xlsx';
-import { useToast } from '../../context/ToastContext';
-import api from '../../utils/api';
+import { useToast } from '../context/ToastContext';
+import api from '../utils/api';
 
 const UPLOAD_CONFIG = {
   student: {

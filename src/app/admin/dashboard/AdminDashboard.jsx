@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, UserPlus, FileText, Bell, School, GraduationCap, ArrowRight, TrendingUp, Calendar, Clock, Activity } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
-import api from '../../utils/api';
-import CustomDropdown from '../../component/CustomDropdown';
+import api from '../../../utils/api';
+import CustomDropdown from '../../../component/CustomDropdown';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

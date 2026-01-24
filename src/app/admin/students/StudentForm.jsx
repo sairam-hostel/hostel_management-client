@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft, Loader, Upload, Eye, EyeOff } from 'lucide-react';
-import { useToast } from '../../context/ToastContext';
-import api from '../../utils/api';
-import InputField from '../../component/InputField';
-import SelectField from '../../component/SelectField';
-import { DEPARTMENTS } from '../../utils/constants';
+import { useToast } from '../../../context/ToastContext';
+import api from '../../../utils/api';
+import InputField from '../../../component/InputField';
+import SelectField from '../../../component/SelectField';
+import { DEPARTMENTS } from '../../../utils/constants';
 
 const StudentForm = () => {
   const { id } = useParams();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Loader, User, Briefcase, Home, Phone, MapPin, Shield } from 'lucide-react';
-import api from '../../utils/api';
+import api from '../../../utils/api';
 
 const FacultyDetails = () => {
   const { id } = useParams();

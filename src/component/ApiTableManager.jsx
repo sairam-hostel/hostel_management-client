@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Filter, Loader, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+import { Search, Filter, Loader, ChevronLeft, ChevronRight, AlertCircle, RefreshCw } from 'lucide-react';
 
 import api from '../utils/api';
 import CustomDropdown from './CustomDropdown';
@@ -115,6 +115,25 @@ const ApiTableManager = ({
           setData([]);
           setTotal(0);
         }
+      });
+      
+      const responseData = response.data;
+      
+      // Handle standardized pagination response structure
+      if (responseData.pagination && Array.isArray(responseData.data)) {
+        setData(responseData.data);
+        setTotal(responseData.pagination.total_items || 0);
+      } else if (responseData.data && Array.isArray(responseData.data)) {
+         // Fallback for previous structure
+         setData(responseData.data);
+         setTotal(responseData.total || responseData.count || responseData.data.length || 0);
+      } else if (Array.isArray(responseData)) {
+        // Fallback for direct array response
+        setData(responseData);
+        setTotal(responseData.length);
+      } else {
+        setData([]);
+        setTotal(0);
       }
     } catch (err) {
       console.error('Error fetching table data:', err);
@@ -165,6 +184,21 @@ const ApiTableManager = ({
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-full sm:w-64"
             />
+          </div>
+          <div className="flex gap-2">
+             <button 
+              className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600"
+              onClick={fetchData} 
+              title="Refresh Table"
+            >
+              <RefreshCw size={18} />
+            </button>
+             <button 
+              className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600"
+              title="Filter"
+            >
+              <Filter size={18} />
+            </button>
           </div>
           <button
             className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600"

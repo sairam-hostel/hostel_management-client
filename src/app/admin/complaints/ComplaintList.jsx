@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
-import ApiTableManager from '../../component/ApiTableManager';
+import ApiTableManager from '../../../component/ApiTableManager';
 
 const STATUS_CONFIG = {
   'pending': { color: 'bg-yellow-100 text-yellow-800', icon: Clock },

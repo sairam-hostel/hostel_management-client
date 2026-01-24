@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Calendar, MapPin, MessageSquare, CheckCircle, Eye, Loader2, AlertCircle } from 'lucide-react';
-import api from '../../utils/api';
-import { useToast } from '../../context/ToastContext';
-import ConfirmationModal from '../../component/ConfirmationModal';
+import api from '../../../utils/api';
+import { useToast } from '../../../context/ToastContext';
+import ConfirmationModal from '../../../component/ConfirmationModal';
 
 const ComplaintDetails = () => {
   const { id } = useParams();

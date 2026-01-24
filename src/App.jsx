@@ -6,25 +6,25 @@ import StudentLayout from './app/student/student';
 import StudentDashboard from './app/student/student dashborad/StudentDashboard';
 import Outpass from './app/student/outpass/Outpass';
 import AdminLayout from './app/admin/AdminLayout';
-import StudentList from './app/admin/StudentList';
-import LeaveManagement from './app/admin/LeaveManagement';
+import StudentList from './app/admin/students/StudentList';
+import LeaveManagement from './app/admin/leave-management/LeaveManagement';
 import Notification from './app/student/notification/Notification';
 import NotificationDetails from './app/student/notification/NotificationDetails';
 import { NotificationProvider } from './context/NotificationContext';
 import { ToastProvider } from './context/ToastContext';
 import Complaints from './app/student/complaints/Complaints';
 import ComplaintDetails from './app/student/complaints/ComplaintDetails';
-import StudentForm from './app/admin/StudentForm';
-import FacultyList from './app/admin/FacultyList';
-import FacultyForm from './app/admin/FacultyForm';
-import FacultyDetails from './app/admin/FacultyDetails';
-import NoticeList from './app/admin/NoticeList';
-import NoticeForm from './app/admin/NoticeForm';
-import NoticeDetails from './app/admin/NoticeDetails';
-import StudentDetails from './app/admin/StudentDetails';
-import AdminDashboard from './app/admin/AdminDashboard';
-import ComplaintList from './app/admin/ComplaintList';
-import AdminComplaintDetails from './app/admin/ComplaintDetails';
+import StudentForm from './app/admin/students/StudentForm';
+import FacultyList from './app/admin/faculty/FacultyList';
+import FacultyForm from './app/admin/faculty/FacultyForm';
+import FacultyDetails from './app/admin/faculty/FacultyDetails';
+import NoticeList from './app/admin/notices/NoticeList';
+import NoticeForm from './app/admin/notices/NoticeForm';
+import NoticeDetails from './app/admin/notices/NoticeDetails';
+import StudentDetails from './app/admin/students/StudentDetails';
+import AdminDashboard from './app/admin/dashboard/AdminDashboard';
+import ComplaintList from './app/admin/complaints/ComplaintList';
+import AdminComplaintDetails from './app/admin/complaints/ComplaintDetails';
 
 const App = () => {
   return (

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MoreVertical, Edit, Trash2, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../../context/ToastContext';
-import ApiTableManager from '../../component/ApiTableManager';
-import api from '../../utils/api';
-import ConfirmationModal from '../../component/ConfirmationModal';
-import BulkUploadModal from './BulkUploadModal';
+import { useToast } from '../../../context/ToastContext';
+import ApiTableManager from '../../../component/ApiTableManager';
+import api from '../../../utils/api';
+import ConfirmationModal from '../../../component/ConfirmationModal';
+import BulkUploadModal from '../../../component/BulkUploadModal';
 
 const StudentList = () => {
   const navigate = useNavigate();
