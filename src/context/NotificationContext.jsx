@@ -40,14 +40,15 @@ export const NotificationProvider = ({ children }) => {
 
     const markAsRead = async (noticeId) => {
         try {
+            console.log("Marking notice as read:", noticeId);
             // Optimistic update
             setNotices(prev => prev.map(n =>
                 n._id === noticeId ? { ...n, is_seen: true } : n
             ));
-            // Optionally refetch or just leave the optimistic update
+
             // Persist to server
-            // Persist to server
-            await api.post(`/bs1/notices/seen`, { noticeId });
+            const response = await api.post(`/bs1/notices/seen`, { noticeId });
+            console.log("Mark as read success:", response.data);
         } catch (err) {
             console.error("Failed to mark notice as read:", err);
             // Revert optimistic update on failure

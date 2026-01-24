@@ -20,6 +20,19 @@ axiosInstance.interceptors.request.use(
   }
 );
 
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
+
 const api = {
   get: (url, config = {}) => axiosInstance.get(url, config),
   post: (url, data, config = {}) => axiosInstance.post(url, data, config),
