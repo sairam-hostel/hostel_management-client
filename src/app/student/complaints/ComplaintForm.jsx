@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import api from '../../../utils/api';
 import CustomDropdown from '../../../component/CustomDropdown';
+import { useToast } from '../../../context/ToastContext';
 
 const CATEGORIES = ["room", "mess", "hostel", "electric", "water", "discipline", "other"];
 const SEVERITIES = ["low", "medium", "high"];
@@ -20,6 +21,7 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   const validate = () => {
     const newErrors = {};
@@ -66,13 +68,13 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
       const response = await api.post('/bs1/complaints', payload);
 
       console.log('Submitted Complaint Response:', response.data);
-      alert('Complaint submitted successfully!');
+      showToast('Complaint submitted successfully!', 'success');
       if (onSuccess) onSuccess();
       else onClose();
 
     } catch (err) {
       console.error("Complaint submission error:", err);
-      alert("Failed to submit complaint. Please try again.");
+      showToast("Failed to submit complaint. Please try again.", 'error');
     } finally {
       setIsSubmitting(false);
     }

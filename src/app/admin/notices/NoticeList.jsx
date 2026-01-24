@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Edit, Trash2, Bell, AlertTriangle, Calendar, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import ApiTableManager from '../../component/ApiTableManager';
-import api from '../../utils/api';
-import ConfirmationModal from '../../component/ConfirmationModal';
+import ApiTableManager from '../../../component/ApiTableManager';
+import api from '../../../utils/api';
+import ConfirmationModal from '../../../component/ConfirmationModal';
 
 const NoticeList = () => {
   const navigate = useNavigate();

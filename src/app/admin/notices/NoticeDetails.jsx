@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Loader, Bell, Calendar, Users, Paperclip, AlertTriangle } from 'lucide-react';
-import api from '../../utils/api';
+import api from '../../../utils/api';
 
 const NoticeDetails = () => {
   const { id } = useParams();
