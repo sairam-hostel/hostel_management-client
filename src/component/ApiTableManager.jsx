@@ -46,6 +46,14 @@ const ApiTableManager = ({
   actions,
   title = "List",
   searchPlaceholder = "Search..."
+const ApiTableManager = ({ 
+  fetchUrl, 
+  columns, 
+  actions, 
+  title = "List", 
+  searchPlaceholder = "Search...",
+  headerActions,
+  noDataComponent
 }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -146,6 +154,8 @@ const ApiTableManager = ({
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
 
         <div className="flex items-center gap-3">
+          {headerActions && <div>{headerActions}</div>}
+
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
@@ -209,7 +219,19 @@ const ApiTableManager = ({
                 ) : (
                   <tr>
                     <td colSpan={columns.length + (actions ? 1 : 0)} className="px-6 py-12 text-center text-gray-400">
-                      No data found
+                      {noDataComponent ? (
+                        noDataComponent
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-6">
+                           <div className="bg-gray-50 p-4 rounded-full mb-3">
+                              <Filter size={32} className="text-gray-300" />
+                           </div>
+                           <p className="text-gray-900 font-medium">No records found</p>
+                           {searchTerm && (
+                             <p className="text-sm text-gray-500 mt-1">Try adjusting your search or filters</p>
+                           )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 )}

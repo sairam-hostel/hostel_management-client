@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import api from '../../../utils/api'
 import StudentInfo from './StudentInfo'
 import ParentInfo from './ParentInfo'
 import HostelInfo from './HostelInfo'
@@ -34,17 +35,20 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div>
-      <StudentInfo />
-     <section className='flex gap-6 mb-6'>
-       <div className='flex-8'>
-        <ParentInfo />
-       </div>
-       <div className='flex-2'>
-        <HostelInfo />
-       </div>
-     </section>
-     <LeaveInfo />
+    <div className="space-y-6">
+      <StudentInfo data={studentData} />
+      
+      {/* Parents & Hostel */}
+      <section className='flex flex-col lg:flex-row gap-6'>
+        <div className='w-full lg:w-[70%]'>
+          <ParentInfo data={studentData} />
+        </div>
+        <div className='w-full lg:w-[30%]'>
+          <HostelInfo data={studentData} />
+        </div>
+      </section>
+
+      <LeaveInfo />
     </div>
   )
 }

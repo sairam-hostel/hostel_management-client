@@ -39,9 +39,8 @@ const StudentInfo = ({ data }) => {
 
         {/* Student Details */}
         <div className="flex flex-col justify-center px-4">
-          <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Student Name</p>
           <h2 className="text-lg font-bold text-gray-900">{student.name}</h2>
-          <div className="flex gap-2 mt-1">
+          <div className="flex flex-wrap gap-4 mt-2  flex-col ">
             <p className="text-sm font-medium text-gray-600 bg-gray-100 inline-block px-2 py-0.5 rounded w-fit">
               {student.rollNumber}
             </p>
@@ -51,11 +50,11 @@ const StudentInfo = ({ data }) => {
               </p>
             )}
           </div>
-          {student.email && <p className="text-xs text-gray-500 mt-2">{student.email}</p>}
+          {/* {student.email && <p className="text-xs text-gray-500 mt-2">{student.email}</p>}
           <div className="flex flex-col gap-1 mt-1">
             {student.phone && <p className="text-xs text-gray-500">Ph: {student.phone}</p>}
             {student.whatsapp && <p className="text-xs text-gray-500">WA: {student.whatsapp}</p>}
-          </div>
+          </div> */}
         </div>
 
         {/* Academic Info */}
@@ -99,6 +98,30 @@ const StudentInfo = ({ data }) => {
         <div className="border-t border-gray-100 pt-4 px-4 w-full">
           <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-3">Personal Information</p>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {student.email && (
+              <div>
+                <p className="text-xs text-gray-400 font-medium">Email</p>
+                <p className="text-sm font-semibold text-gray-900 break-all">{student.email}</p>
+              </div>
+            )}
+            {student.phone && (
+              <div>
+                <p className="text-xs text-gray-400 font-medium">Phone</p>
+                <p className="text-sm font-semibold text-gray-900">{student.phone}</p>
+              </div>
+            )}
+            {student.alternatePhone && (
+              <div>
+                <p className="text-xs text-gray-400 font-medium">Alternate Phone</p>
+                <p className="text-sm font-semibold text-gray-900">{student.alternatePhone}</p>
+              </div>
+            )}
+            {student.whatsapp && (
+              <div>
+                <p className="text-xs text-gray-400 font-medium">WhatsApp</p>
+                <p className="text-sm font-semibold text-gray-900">{student.whatsapp}</p>
+              </div>
+            )}
             {student.dob && (
               <div>
                 <p className="text-xs text-gray-400 font-medium">DOB</p>
