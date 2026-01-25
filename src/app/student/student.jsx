@@ -12,8 +12,8 @@ const STUDENT_NAV_ITEMS = [
     icon: LayoutDashboard,
   },
   {
-    path: '/student/outpass',
-    label: 'Outpass',
+    path: '/student/requests',
+    label: 'Request',
     icon: FileEdit,
   },
   {
