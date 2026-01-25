@@ -41,16 +41,10 @@ const useDebounce = (value, delay) => {
  */
 const ApiTableManager = ({
   fetchUrl,
-  dataSource, // New prop for client-side data
+  dataSource, // Client-side data
   columns,
   actions,
   title = "List",
-  searchPlaceholder = "Search..."
-const ApiTableManager = ({ 
-  fetchUrl, 
-  columns, 
-  actions, 
-  title = "List", 
   searchPlaceholder = "Search...",
   headerActions,
   noDataComponent
@@ -105,32 +99,22 @@ const ApiTableManager = ({
 
         const responseData = response.data;
 
-        if (responseData.data) {
+        // Handle standardized pagination response structure
+        if (responseData.pagination && Array.isArray(responseData.data)) {
           setData(responseData.data);
-          setTotal(responseData.total || responseData.count || 0);
+          setTotal(responseData.pagination.total_items || 0);
+        } else if (responseData.data && Array.isArray(responseData.data)) {
+           // Fallback for previous structure
+           setData(responseData.data);
+           setTotal(responseData.total || responseData.count || responseData.data.length || 0);
         } else if (Array.isArray(responseData)) {
+          // Fallback for direct array response
           setData(responseData);
           setTotal(responseData.length);
         } else {
           setData([]);
           setTotal(0);
         }
-      });
-      
-      const responseData = response.data;
-      
-      // Handle standardized pagination response structure
-      if (responseData.pagination && Array.isArray(responseData.data)) {
-        setData(responseData.data);
-        setTotal(responseData.pagination.total_items || 0);
-      } else if (responseData.data && Array.isArray(responseData.data)) {
-         // Fallback for previous structure
-         setData(responseData.data);
-         setTotal(responseData.total || responseData.count || responseData.data.length || 0);
-      } else if (Array.isArray(responseData)) {
-        // Fallback for direct array response
-        setData(responseData);
-        setTotal(responseData.length);
       } else {
         setData([]);
         setTotal(0);
@@ -200,13 +184,7 @@ const ApiTableManager = ({
               <Filter size={18} />
             </button>
           </div>
-          <button
-            className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600"
-            onClick={fetchData}
-            title="Refresh"
-          >
-            <Filter size={18} />
-          </button>
+
         </div>
       </div>
 

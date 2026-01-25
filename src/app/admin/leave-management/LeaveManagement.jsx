@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, Clock, Calendar, FileText, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, Calendar, FileText } from 'lucide-react';
 import ApiTableManager from '../../../component/ApiTableManager';
 import api from '../../../utils/api';
 import { useToast } from '../../../context/ToastContext';
@@ -10,6 +10,7 @@ const LeaveManagement = () => {
   const { showToast } = useToast();
   const [approvalModal, setApprovalModal] = useState({ isOpen: false, request: null });
   const [rejectionModal, setRejectionModal] = useState({ isOpen: false, request: null });
+  const [refreshKey, setRefreshKey] = useState(0); // Trigger for table refresh
   // We can filter by status in the API if supported, or use the response `status` field.
   // For now, let's just display the list.
 
@@ -28,14 +29,15 @@ const LeaveManagement = () => {
   const handleApproveConfirm = async (formData) => {
     try {
       const request = approvalModal.request;
-      const id = request.request_id || request._id || request.id;
+      // Prioritize student_request_id as per API spec
+      const id = request.student_request_id || request.request_id || request._id || request.id;
       
       // PATCH endpoint for approval with dates
       await api.patch(`/bf1/leave-outpass/${id}/approve`, formData);
       
       showToast('Request approved successfully', 'success');
       setApprovalModal({ isOpen: false, request: null });
-      window.location.reload();
+      setRefreshKey(prev => prev + 1); // Refresh table
     } catch (err) {
         console.error('Error approving request:', err);
         const msg = err.response?.data?.message || 'Failed to approve request';
@@ -46,6 +48,7 @@ const LeaveManagement = () => {
   const handleRejectConfirm = async (reason) => {
     try {
       const request = rejectionModal.request;
+      // Prioritize request_id as per API spec
       const id = request.request_id || request._id || request.id;
       
       // PATCH endpoint for rejection with note
@@ -53,7 +56,7 @@ const LeaveManagement = () => {
       
       showToast('Request rejected successfully', 'success');
       setRejectionModal({ isOpen: false, request: null });
-      window.location.reload();
+      setRefreshKey(prev => prev + 1); // Refresh table
     } catch (err) {
         console.error('Error rejecting request:', err);
         const msg = err.response?.data?.message || 'Failed to reject request';
@@ -168,6 +171,7 @@ const LeaveManagement = () => {
       <ApiTableManager
         title="Leave & Outpass Requests"
         fetchUrl="/bf1/leave-outpass"
+        key={refreshKey} // Force re-render/fetch on update
         columns={columns}
         actions={actions}
         searchPlaceholder="Search by reason..."
