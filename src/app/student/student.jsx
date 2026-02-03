@@ -33,7 +33,12 @@ const StudentLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path === '/student') {
+      return location.pathname === '/student';
+    }
+    return location.pathname.startsWith(path);
+  };
   const { unreadCount } = useNotification();
 
   const handleLogout = () => {

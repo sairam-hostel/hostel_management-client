@@ -11,9 +11,9 @@ const Request = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Outpass Card */}
-                <div
+                <button
                     onClick={() => navigate('/student/outpass')}
-                    className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer border border-gray-100 group"
+                    className="w-full text-left bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100 group"
                 >
                     <div className="flex items-center space-x-4">
                         <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
@@ -24,12 +24,12 @@ const Request = () => {
                             <p className="text-gray-500 mt-1">Request for leave or outing</p>
                         </div>
                     </div>
-                </div>
+                </button>
 
                 {/* Mess Count Card */}
-                <div
+                <button
                     onClick={() => navigate('/student/mess-count')}
-                    className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer border border-gray-100 group"
+                    className="w-full text-left bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100 group"
                 >
                     <div className="flex items-center space-x-4">
                         <div className="p-3 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
@@ -40,7 +40,7 @@ const Request = () => {
                             <p className="text-gray-500 mt-1">View or update mess details</p>
                         </div>
                     </div>
-                </div>
+                </button>
             </div>
         </div>
     );

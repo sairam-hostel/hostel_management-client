@@ -139,12 +139,12 @@ const OutpassDetails = () => {
                         <InfoItem
                             icon={Calendar}
                             label="From Date"
-                            value={new Date(details.from_date).toLocaleString()}
+                            value={details.from_date && !isNaN(new Date(details.from_date).getTime()) ? new Date(details.from_date).toLocaleString() : 'N/A'}
                         />
                         <InfoItem
                             icon={Calendar}
                             label="To Date"
-                            value={new Date(details.to_date).toLocaleString()}
+                            value={details.to_date && !isNaN(new Date(details.to_date).getTime()) ? new Date(details.to_date).toLocaleString() : 'N/A'}
                         />
                         <InfoItem
                             icon={Clock}

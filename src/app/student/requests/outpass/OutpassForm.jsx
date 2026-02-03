@@ -60,10 +60,22 @@ const OutpassForm = () => {
             return;
         }
 
+        // Dropdown Validation
+        if (!formData.year) {
+            alert("Please select your year");
+            return;
+        }
+        if (!formData.mode_of_transport) {
+            alert("Please select a mode of transport");
+            return;
+        }
+
         try {
             const formDataToSend = new FormData();
             Object.keys(formData).forEach(key => {
-                formDataToSend.append(key, formData[key]);
+                if (formData[key] !== null && formData[key] !== undefined) {
+                    formDataToSend.append(key, formData[key]);
+                }
             });
 
             // Using the api utility for consistent base URL and headers
