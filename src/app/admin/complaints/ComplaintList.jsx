@@ -15,20 +15,23 @@ const ComplaintList = () => {
 
   const columns = [
     {
+      header: 'Complaint',
+      render: (complaint) => (
+        <div 
+          onClick={() => navigate(`/admin/complaints/${complaint._id || complaint.id}`)}
+          className="flex flex-col cursor-pointer group"
+        >
+          <span className="font-medium text-blue-600 group-hover:text-blue-800 transition-colors">{complaint.title}</span>
+          <span className="text-xs text-gray-500 capitalize">{complaint.category}</span>
+        </div>
+      ),
+    },
+    {
       header: 'Student Info',
       render: (complaint) => (
         <div className="flex flex-col">
           <span className="font-medium text-gray-900">{complaint.student_name || 'Unknown Student'}</span>
           <span className="text-xs text-gray-500">{complaint.student_roll || 'N/A'}</span>
-        </div>
-      ),
-    },
-    {
-      header: 'Complaint',
-      render: (complaint) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-gray-900">{complaint.title}</span>
-          <span className="text-xs text-gray-500 capitalize">{complaint.category}</span>
         </div>
       ),
     },
@@ -57,23 +60,12 @@ const ComplaintList = () => {
     },
   ];
 
-  const actions = (complaint) => (
-    <button
-      onClick={() => navigate(`/admin/complaints/${complaint._id || complaint.id}`)}
-      className="text-purple-600 hover:text-purple-900 p-1 rounded-full hover:bg-purple-50 transition-colors"
-      title="View Details"
-    >
-      <Eye size={18} />
-    </button>
-  );
-
   return (
     <div className="p-6">
       <ApiTableManager
         title="Student Complaints"
         fetchUrl="/bf1/complaints"
         columns={columns}
-        actions={actions}
         searchPlaceholder="Search Complaints..."
       />
     </div>
