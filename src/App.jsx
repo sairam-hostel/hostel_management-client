@@ -4,7 +4,11 @@ import Login from './app/auth/Login';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import StudentLayout from './app/student/student';
 import StudentDashboard from './app/student/student dashborad/StudentDashboard';
-import Outpass from './app/student/outpass/Outpass';
+import Outpass from "./app/student/requests/outpass/Outpass";
+import OutpassForm from "./app/student/requests/outpass/OutpassForm";
+import OutpassDetails from "./app/student/requests/outpass/OutpassDetails";
+import MessCount from './app/student/requests/mess/MessCount';
+import Request from './app/student/requests/Request';
 import AdminLayout from './app/admin/AdminLayout';
 import StudentList from './app/admin/students/StudentList';
 import LeaveManagement from './app/admin/leave-management/LeaveManagement';
@@ -42,6 +46,10 @@ const App = () => {
             }>
               <Route index element={<StudentDashboard />} />
               <Route path="outpass" element={<Outpass />} />
+              <Route path="outpass/apply" element={<OutpassForm />} />
+              <Route path="outpass/:id" element={<OutpassDetails />} />
+              <Route path="requests" element={<Request />} />
+              <Route path="mess-count" element={<MessCount />} />
               <Route path="notification" element={<Notification />} />
               <Route path="notification/:id" element={<NotificationDetails />} />
               <Route path="complaints" element={<Complaints />} />

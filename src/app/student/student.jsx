@@ -12,8 +12,8 @@ const STUDENT_NAV_ITEMS = [
     icon: LayoutDashboard,
   },
   {
-    path: '/student/outpass',
-    label: 'Outpass',
+    path: '/student/requests',
+    label: 'Request',
     icon: FileEdit,
   },
   {
@@ -33,7 +33,12 @@ const StudentLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path === '/student') {
+      return location.pathname === '/student';
+    }
+    return location.pathname.startsWith(path);
+  };
   const { unreadCount } = useNotification();
 
   const handleLogout = () => {
