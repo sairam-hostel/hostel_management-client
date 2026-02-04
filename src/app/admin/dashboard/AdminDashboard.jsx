@@ -5,7 +5,10 @@ import ReactECharts from 'echarts-for-react';
 import api from '../../../utils/api';
 import CustomDropdown from '../../../component/CustomDropdown';
 
+import { useTheme } from '../../../context/ThemeContext';
+
 const AdminDashboard = () => {
+  const { accentColor } = useTheme();
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     students: 0,
@@ -189,8 +192,8 @@ const AdminDashboard = () => {
               type: 'linear',
               x: 0, y: 0, x2: 0, y2: 1,
               colorStops: [
-                { offset: 0, color: '#8b5cf6' },
-                { offset: 1, color: '#c4b5fd' }
+                { offset: 0, color: accentColor },
+                { offset: 1, color: `${accentColor}80` }
               ]
             },
             borderRadius: [4, 4, 0, 0]
@@ -207,14 +210,14 @@ const AdminDashboard = () => {
       onClick={() => navigate(link)}
       className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
     >
-      <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${colorClass}`}>
+      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity" style={{ color: colorClass }}>
         <Icon size={80} />
       </div>
       
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <div className={`p-2.5 rounded-lg ${colorClass} bg-opacity-10 text-current`}>
-            <Icon size={22} className={`${colorClass} text-opacity-100`} />
+          <div className="p-2.5 rounded-lg bg-opacity-10 text-current" style={{ backgroundColor: `${colorClass}20`, color: colorClass }}>
+            <Icon size={22} style={{ color: colorClass }} />
           </div>
           {trend && (
             <div className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
@@ -252,7 +255,7 @@ const AdminDashboard = () => {
           title="Total Students" 
           count={stats.students} 
           icon={GraduationCap} 
-          colorClass="text-purple-600"
+          colorClass={accentColor}
           link="/admin/students"
           trend="+12% this month"
         />
@@ -260,7 +263,7 @@ const AdminDashboard = () => {
           title="Faculty & Wardens" 
           count={stats.faculty} 
           icon={School} 
-          colorClass="text-blue-600"
+          colorClass="#2563eb"
           link="/admin/faculty"
           trend="Stable"
         />
@@ -268,7 +271,7 @@ const AdminDashboard = () => {
           title="Active Notices" 
           count={stats.notices} 
           icon={Bell} 
-          colorClass="text-orange-500"
+          colorClass="#f97316"
           link="/admin/notices"
           trend="3 New today"
         />
@@ -319,7 +322,7 @@ const AdminDashboard = () => {
 
                    <div className="h-[480px] w-full">
                       <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: accentColor }}></div>
                         <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Year</p>
                       </div>
                        {stats.students > 0 ? (
@@ -345,9 +348,20 @@ const AdminDashboard = () => {
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
                 <div className="space-y-3">
-                   <button onClick={() => navigate('/admin/create-student')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-purple-50 hover:text-purple-700 text-gray-600 transition-colors group">
+                   <button 
+                    onClick={() => navigate('/admin/create-student')} 
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 text-gray-600 transition-colors group hover:bg-opacity-50"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = `${accentColor}10`;
+                      e.currentTarget.style.color = accentColor;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '';
+                      e.currentTarget.style.color = '';
+                    }}
+                    >
                       <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-purple-600"><UserPlus size={18} /></div>
+                        <div className="bg-white p-2 rounded-lg shadow-sm" style={{ color: 'inherit' }}><UserPlus size={18} /></div>
                         <span className="font-medium text-sm">Add Student</span>
                       </div>
                       <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -387,7 +401,7 @@ const AdminDashboard = () => {
                   ) : stats.recentNotices.length > 0 ? (
                     stats.recentNotices.map((notice, idx) => (
                       <div key={idx} className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0 last:pb-0">
-                         <div className="mt-1 w-2 h-2 rounded-full bg-purple-500 shrink-0"></div>
+                         <div className="mt-1 w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: accentColor }}></div>
                          <div>
                             <p className="text-sm font-medium text-gray-900 line-clamp-1">{notice.title}</p>
                             <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{notice.category} • {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
@@ -401,7 +415,10 @@ const AdminDashboard = () => {
                 
                 <button 
                   onClick={() => navigate('/admin/notices')}
-                  className="w-full mt-4 text-xs font-medium text-center text-gray-500 hover:text-purple-600 transition-colors"
+                  className="w-full mt-4 text-xs font-medium text-center text-gray-500 transition-colors hover:text-opacity-80"
+                  style={{ ':hover': { color: accentColor } }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = accentColor}
+                  onMouseLeave={(e) => e.currentTarget.style.color = ''}
                 >
                   View All Activity
                 </button>

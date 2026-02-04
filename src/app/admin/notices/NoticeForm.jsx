@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, ArrowLeft, Loader, Paperclip, X } from 'lucide-react';
+import { Save, ArrowLeft, Loader, Paperclip, X, ChevronDown } from 'lucide-react';
 import { useToast } from '../../../context/ToastContext';
 import api from '../../../utils/api';
 import InputField from '../../../component/InputField';
@@ -135,11 +135,38 @@ const NoticeForm = () => {
     );
   }
 
-  const SectionHeader = ({ title }) => (
-    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 mt-6 border-b border-gray-100 pb-2">
-      {title}
-    </h3>
-  );
+  const CollapsibleSection = ({ title, children, defaultOpen = false }) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+    
+    return (
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`
+            flex items-center justify-between w-full gap-3 px-4 py-2.5 
+            bg-white border text-sm font-medium rounded-xl shadow-sm transition-all duration-200
+            ${isOpen 
+              ? 'border-purple-500 ring-2 ring-purple-100 text-purple-700' 
+              : 'border-gray-200 text-gray-700 hover:border-purple-300 hover:bg-gray-50'
+            }
+          `}
+        >
+          <span>{title}</span>
+          <ChevronDown 
+            size={16} 
+            className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-purple-500' : ''}`} 
+          />
+        </button>
+        
+        {isOpen && (
+          <div className="mt-4 animate-in slide-in-from-top-2 fade-in duration-200">
+            {children}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="max-w-5xl mx-auto h-[calc(100vh-160px)] flex flex-col overflow-hidden">
@@ -171,129 +198,133 @@ const NoticeForm = () => {
         <form className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
           
           {/* Basic Info */}
-          <div className="space-y-6">
-            <InputField 
-              label="Notice Title" 
-              name="title" 
-              value={formData.title} 
-              onChange={handleChange} 
-              required 
-              placeholder="e.g. Hostel Fee Payment Deadline Extension"
-            />
-            
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Message Content <span className="text-red-500">*</span></label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                rows={4}
-                required
-                className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm w-full transition-shadow resize-y"
-                placeholder="Enter the full content of the notice here..."
+          <CollapsibleSection title="Notice Details" defaultOpen={true}>
+            <div className="space-y-6">
+              <InputField 
+                label="Notice Title" 
+                name="title" 
+                value={formData.title} 
+                onChange={handleChange} 
+                required 
+                placeholder="e.g. Hostel Fee Payment Deadline Extension"
               />
-            </div>
+              
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Message Content <span className="text-red-500">*</span></label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={4}
+                  required
+                  className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm w-full transition-shadow resize-y text-gray-900 placeholder:text-gray-400 bg-white"
+                  placeholder="Enter the full content of the notice here..."
+                />
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <SelectField 
+                  label="Category" 
+                  name="category" 
+                  options={["general", "hostel", "academic", "urgent", "event", "fee"]} 
+                  value={formData.category} 
+                  onChange={handleChange} 
+                  required 
+                />
+                 <SelectField 
+                  label="Priority" 
+                  name="priority" 
+                  options={["low", "medium", "high", "critical"]} 
+                  value={formData.priority} 
+                  onChange={handleChange} 
+                  required 
+                />
+              </div>
+            </div>
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Target Audience">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <SelectField 
-                label="Category" 
-                name="category" 
-                options={["general", "hostel", "academic", "urgent", "event", "fee"]} 
-                value={formData.category} 
-                onChange={handleChange} 
-                required 
-              />
                <SelectField 
-                label="Priority" 
-                name="priority" 
-                options={["low", "medium", "high", "critical"]} 
-                value={formData.priority} 
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-          </div>
-
-          <SectionHeader title="Target Audience" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <SelectField 
-                label="Target Department" 
-                name="target_department" 
-                options={["all", ...DEPARTMENTS]} 
-                value={formData.target_department} 
-                onChange={handleChange} 
-                searchable
-             />
-             <InputField label="Target Course" name="target_course" value={formData.target_course} onChange={handleChange} placeholder="e.g. BTech" />
-             <InputField label="Target Year" name="target_year" value={formData.target_year} onChange={handleChange} placeholder="e.g. 1st, 2nd, all" />
-             <SelectField 
-                label="Gender Group" 
-                name="target_gender" 
-                options={["all", "male", "female"]} 
-                value={formData.target_gender} 
-                onChange={handleChange} 
-              />
-          </div>
-
-          <SectionHeader title="Validity & Attachments" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-             <InputField label="Valid From" name="valid_from" type="date" value={formData.valid_from} onChange={handleChange} required />
-             <InputField label="Valid Till" name="valid_till" type="date" value={formData.valid_till} onChange={handleChange} required />
-          </div>
-          
-          <div className="mb-6">
-             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-               <input type="checkbox" name="expires" checked={formData.expires} onChange={handleChange} className="rounded text-purple-600 focus:ring-purple-500" />
-               Auto-expire notice after "Valid Till" date
-             </label>
-          </div>
-
-          <div className="flex flex-col gap-2">
-             <label className="text-sm font-medium text-gray-700">Attachments (Optional)</label>
-             <div className="flex gap-2">
-               <input 
-                 type="text" 
-                 value={newAttachment}
-                 onChange={(e) => setNewAttachment(e.target.value)}
-                 placeholder="Enter attachment URL (e.g. Google Drive link)"
-                 className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  label="Target Department" 
+                  name="target_department" 
+                  options={["all", ...DEPARTMENTS]} 
+                  value={formData.target_department} 
+                  onChange={handleChange} 
+                  searchable
                />
-               <button 
-                 type="button" 
-                 onClick={handleAddAttachment}
-                 className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
-               >
-                 <Paperclip size={18} />
-               </button>
-             </div>
-             
-             {formData.attachments && formData.attachments.length > 0 && (
-               <div className="mt-2 space-y-2">
-                 {formData.attachments.map((link, idx) => (
-                   <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-100 text-xs">
-                     <span 
-                       className="truncate flex-1 text-blue-600 hover:underline cursor-pointer" 
-                       onClick={() => {
-                         try {
-                           const url = new URL(link);
-                           if (['http:', 'https:'].includes(url.protocol.toLowerCase())) {
-                             window.open(url.href, '_blank', 'noopener,noreferrer');
-                           }
-                         } catch (e) {
-                           // Invalid URL, ignore
-                         }
-                       }}
-                     >
-                       {link}
-                     </span>
-                     <button type="button" onClick={() => removeAttachment(idx)} className="text-red-500 hover:bg-red-50 p-1 rounded">
-                       <X size={14} />
-                     </button>
-                   </div>
-                 ))}
+               <InputField label="Target Course" name="target_course" value={formData.target_course} onChange={handleChange} placeholder="e.g. BTech" />
+               <InputField label="Target Year" name="target_year" value={formData.target_year} onChange={handleChange} placeholder="e.g. 1st, 2nd, all" />
+               <SelectField 
+                  label="Gender Group" 
+                  name="target_gender" 
+                  options={["all", "male", "female"]} 
+                  value={formData.target_gender} 
+                  onChange={handleChange} 
+                />
+            </div>
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Validity & Attachments">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+               <InputField label="Valid From" name="valid_from" type="date" value={formData.valid_from} onChange={handleChange} required />
+               <InputField label="Valid Till" name="valid_till" type="date" value={formData.valid_till} onChange={handleChange} required />
+            </div>
+            
+            <div className="mb-6">
+               <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                 <input type="checkbox" name="expires" checked={formData.expires} onChange={handleChange} className="rounded text-purple-600 focus:ring-purple-500" />
+                 Auto-expire notice after "Valid Till" date
+               </label>
+            </div>
+
+            <div className="flex flex-col gap-2">
+               <label className="text-sm font-medium text-gray-700">Attachments (Optional)</label>
+               <div className="flex gap-2">
+                 <input 
+                   type="text" 
+                   value={newAttachment}
+                   onChange={(e) => setNewAttachment(e.target.value)}
+                   placeholder="Enter attachment URL (e.g. Google Drive link)"
+                   className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder:text-gray-400 bg-white"
+                 />
+                 <button 
+                   type="button" 
+                   onClick={handleAddAttachment}
+                   className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
+                 >
+                   <Paperclip size={18} />
+                 </button>
                </div>
-             )}
-          </div>
+               
+               {formData.attachments && formData.attachments.length > 0 && (
+                 <div className="mt-2 space-y-2">
+                   {formData.attachments.map((link, idx) => (
+                     <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-100 text-xs">
+                       <span 
+                         className="truncate flex-1 text-blue-600 hover:underline cursor-pointer" 
+                         onClick={() => {
+                           try {
+                             const url = new URL(link);
+                             if (['http:', 'https:'].includes(url.protocol.toLowerCase())) {
+                               window.open(url.href, '_blank', 'noopener,noreferrer');
+                             }
+                           } catch (e) {
+                             // Invalid URL, ignore
+                           }
+                         }}
+                       >
+                         {link}
+                       </span>
+                       <button type="button" onClick={() => removeAttachment(idx)} className="text-red-500 hover:bg-red-50 p-1 rounded">
+                         <X size={14} />
+                       </button>
+                     </div>
+                   ))}
+                 </div>
+               )}
+            </div>
+          </CollapsibleSection>
 
         </form>
       </div>

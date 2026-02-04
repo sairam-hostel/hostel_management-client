@@ -16,6 +16,7 @@ import Notification from './app/student/notification/Notification';
 import NotificationDetails from './app/student/notification/NotificationDetails';
 import { NotificationProvider } from './context/NotificationContext';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Complaints from './app/student/complaints/Complaints';
 import ComplaintDetails from './app/student/complaints/ComplaintDetails';
 import StudentForm from './app/admin/students/StudentForm';
@@ -29,12 +30,18 @@ import StudentDetails from './app/admin/students/StudentDetails';
 import AdminDashboard from './app/admin/dashboard/AdminDashboard';
 import ComplaintList from './app/admin/complaints/ComplaintList';
 import AdminComplaintDetails from './app/admin/complaints/ComplaintDetails';
+import Settings from './app/admin/settings/Settings';
+import Personalisation from './app/admin/settings/Personalisation';
+import Security from './app/admin/settings/Security';
+import Rules from './app/admin/settings/Rules';
+import Profile from './app/admin/profile/Profile';
 
 const App = () => {
   return (
     <Router>
-      <ToastProvider>
-        <Routes>
+      <ThemeProvider>
+        <ToastProvider>
+          <Routes>
           <Route path="/" element={<Login />} />
 
 
@@ -75,10 +82,16 @@ const App = () => {
               <Route path="notices/edit/:id" element={<NoticeForm />} />
               <Route path="complaints" element={<ComplaintList />} />
               <Route path="complaints/:id" element={<AdminComplaintDetails />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="settings/personalisation" element={<Personalisation />} />
+              <Route path="settings/security" element={<Security />} />
+              <Route path="settings/rules" element={<Rules />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
           </Route>
-        </Routes>
-      </ToastProvider>
+          </Routes>
+        </ToastProvider>
+      </ThemeProvider>
     </Router>
   );
 }
