@@ -26,8 +26,8 @@ const LeaveInfo = () => {
           const isEligible = previousMonthLeaves <= 2;
 
           return (
-            <div 
-              key={data.month} 
+            <div
+              key={data.month}
               className={`p-4 rounded-lg border ${isEligible ? 'bg-white border-gray-200' : 'bg-red-50 border-red-200'}`}
             >
               <div className="flex justify-between items-start mb-2">
@@ -43,7 +43,7 @@ const LeaveInfo = () => {
                   </span>
                 )}
               </div>
-              
+
               <div className="mt-4">
                 <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Leaves Taken</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{data.leavesTaken}</p>
