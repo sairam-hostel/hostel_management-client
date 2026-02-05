@@ -1,30 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import api from '../../../utils/api';
 
 const OutpassStatus = () => {
     const [status, setStatus] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Mock fetching data
     useEffect(() => {
         const fetchStatus = async () => {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Mock Data - Replace with actual API call later
-            // Possible statuses: 'Pending', 'Approved', 'Rejected'
-            const mockData = {
-                id: 1,
-                type: 'Outpass',
-                status: 'Pending', // Change this to test different states
-                fromDate: '2024-12-15',
-                toDate: '2024-12-17',
-                reason: 'Family function',
-                appliedOn: '2024-12-10',
-            };
-
-            setStatus(mockData);
-            setLoading(false);
+            try {
+                const response = await api.get('/bf1/leave-outpass');
+                // API returns { success: true, count: 1, data: [...] }
+                const data = response.data.data || [];
+                
+                if (data.length > 0) {
+                     // Sort by created_at desc to get latest if multiple are returned
+                    const latest = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+                    
+                    setStatus({
+                        status: latest.status,
+                        fromDate: latest.from_date ? new Date(latest.from_date).toLocaleDateString() : '-',
+                        toDate: latest.to_date ? new Date(latest.to_date).toLocaleDateString() : '-',
+                        reason: latest.request_reason,
+                        appliedOn: latest.created_at ? new Date(latest.created_at).toLocaleDateString() : '-',
+                        type: latest.type
+                    });
+                } else {
+                    setStatus(null);
+                }
+            } catch (error) {
+                console.error("Failed to fetch outpass status", error);
+                setStatus(null);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchStatus();
@@ -47,19 +56,17 @@ const OutpassStatus = () => {
     }
 
     const getStatusColor = (statusType) => {
-        switch (statusType) {
-            case 'Approved': return 'text-green-600 bg-green-50 border-green-200';
-            case 'Rejected': return 'text-red-600 bg-red-50 border-red-200';
-            default: return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-        }
+        const s = statusType?.toLowerCase();
+        if (s === 'approved') return 'text-green-600 bg-green-50 border-green-200';
+        if (s === 'rejected') return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
     };
 
     const getStatusIcon = (statusType) => {
-        switch (statusType) {
-            case 'Approved': return <CheckCircle size={20} />;
-            case 'Rejected': return <XCircle size={20} />;
-            default: return <Clock size={20} />;
-        }
+        const s = statusType?.toLowerCase();
+        if (s === 'approved') return <CheckCircle size={20} />;
+        if (s === 'rejected') return <XCircle size={20} />;
+        return <Clock size={20} />;
     };
 
     return (

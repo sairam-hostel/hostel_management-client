@@ -1,34 +1,22 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, FileText } from 'lucide-react';
+import { FileText, Gavel } from 'lucide-react';
 import ApiTableManager from '../../../component/ApiTableManager';
 import api from '../../../utils/api';
 import { useToast } from '../../../context/ToastContext';
-import ApprovalModal from './ApprovalModal';
-import RejectionModal from './RejectionModal';
+import LeaveActionModal from './LeaveActionModal';
 
 const LeaveManagement = () => {
   const { showToast } = useToast();
-  const [approvalModal, setApprovalModal] = useState({ isOpen: false, request: null });
-  const [rejectionModal, setRejectionModal] = useState({ isOpen: false, request: null });
+  const [actionModal, setActionModal] = useState({ isOpen: false, request: null });
   const [refreshKey, setRefreshKey] = useState(0); // Trigger for table refresh
-  // We can filter by status in the API if supported, or use the response `status` field.
-  // For now, let's just display the list.
 
-  const handleAction = async (request, action) => {
-    if (action === 'approved') {
-        setApprovalModal({ isOpen: true, request });
-        return;
-    }
-    
-    if (action === 'rejected') {
-        setRejectionModal({ isOpen: true, request });
-        return;
-    }
+  const handleAction = (request) => {
+    setActionModal({ isOpen: true, request });
   };
 
   const handleApproveConfirm = async (formData) => {
     try {
-      const request = approvalModal.request;
+      const request = actionModal.request;
       // Prioritize student_request_id as per API spec
       const id = request.student_request_id || request.request_id || request._id || request.id;
       
@@ -36,7 +24,7 @@ const LeaveManagement = () => {
       await api.patch(`/bf1/leave-outpass/${id}/approve`, formData);
       
       showToast('Request approved successfully', 'success');
-      setApprovalModal({ isOpen: false, request: null });
+      setActionModal({ isOpen: false, request: null });
       setRefreshKey(prev => prev + 1); // Refresh table
     } catch (err) {
         console.error('Error approving request:', err);
@@ -47,7 +35,7 @@ const LeaveManagement = () => {
 
   const handleRejectConfirm = async (reason) => {
     try {
-      const request = rejectionModal.request;
+      const request = actionModal.request;
       // Prioritize request_id as per API spec
       const id = request.request_id || request._id || request.id;
       
@@ -55,7 +43,7 @@ const LeaveManagement = () => {
       await api.patch(`/bf1/leave-outpass/${id}/reject`, { admin_note: reason });
       
       showToast('Request rejected successfully', 'success');
-      setRejectionModal({ isOpen: false, request: null });
+      setActionModal({ isOpen: false, request: null });
       setRefreshKey(prev => prev + 1); // Refresh table
     } catch (err) {
         console.error('Error rejecting request:', err);
@@ -69,16 +57,18 @@ const LeaveManagement = () => {
   const columns = [
     {
       header: 'Student Name',
-      accessor: 'student_name',
+      accessor: 'student.name',
       render: (request) => (
-        <span className="font-medium text-gray-900">{request.student_name || 'Loading...'}</span>
+        <span className="font-medium text-gray-900">{request.student?.name || 'Loading...'}</span>
       )
     },
     {
       header: 'ID',
-      accessor: 'roll_number',
+      accessor: 'student.roll_number',
       render: (request) => (
-        <span className="text-gray-500 font-mono text-xs">{request.roll_number || request.student_id || '-'}</span>
+         <div className="flex flex-col">
+            <span className="text-gray-500 font-mono text-xs">{request.student?.roll_number || '-'}</span>
+         </div>
       )
     },
     {
@@ -95,8 +85,8 @@ const LeaveManagement = () => {
       header: 'From',
       render: (request) => (
         <div className="flex flex-col text-sm text-gray-600">
-           <span className="font-medium">{new Date(request.from_date).toLocaleDateString()}</span>
-           {/* <span className="text-xs text-gray-400">{new Date(request.from_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span> */}
+           <span className="font-medium">{request.from_date ? new Date(request.from_date).toLocaleDateString() : '-'}</span>
+           <span className="text-xs text-gray-400">{request.from_date ? new Date(request.from_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
         </div>
       )
     },
@@ -104,8 +94,8 @@ const LeaveManagement = () => {
       header: 'To',
       render: (request) => (
          <div className="flex flex-col text-sm text-gray-600">
-           <span className="font-medium">{new Date(request.to_date).toLocaleDateString()}</span>
-           {/* <span className="text-xs text-gray-400">{new Date(request.to_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span> */}
+           <span className="font-medium">{request.to_date ? new Date(request.to_date).toLocaleDateString() : '-'}</span>
+           <span className="text-xs text-gray-400">{request.to_date ? new Date(request.to_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
         </div>
       )
     },
@@ -141,20 +131,13 @@ const LeaveManagement = () => {
     if (request.admin_status !== 'pending') return null;
     
     return (
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-center gap-2">
         <button 
-          onClick={() => handleAction(request, 'approved')}
-          className="text-green-600 hover:text-green-800 p-1 rounded hover:bg-green-50"
-          title="Approve"
+          onClick={() => handleAction(request)}
+          className="text-purple-600 hover:text-purple-800 p-1.5 rounded-full hover:bg-purple-50 transition-colors"
+          title="Take Decision"
         >
-          <CheckCircle size={18} />
-        </button>
-        <button 
-          onClick={() => handleAction(request, 'rejected')}
-          className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50"
-          title="Reject"
-        >
-          <XCircle size={18} />
+          <Gavel size={18} />
         </button>
       </div>
     );
@@ -171,17 +154,12 @@ const LeaveManagement = () => {
         searchPlaceholder="Search by reason..."
       />
       
-      <ApprovalModal 
-        isOpen={approvalModal.isOpen}
-        onClose={() => setApprovalModal({ isOpen: false, request: null })}
-        onConfirm={handleApproveConfirm}
-        request={approvalModal.request}
-      />
-
-      <RejectionModal 
-        isOpen={rejectionModal.isOpen}
-        onClose={() => setRejectionModal({ isOpen: false, request: null })}
-        onConfirm={handleRejectConfirm}
+      <LeaveActionModal
+        isOpen={actionModal.isOpen}
+        onClose={() => setActionModal({ isOpen: false, request: null })}
+        onApprove={handleApproveConfirm}
+        onReject={handleRejectConfirm}
+        request={actionModal.request}
       />
     </div>
   );
