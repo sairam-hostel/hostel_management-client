@@ -16,6 +16,7 @@ import Notification from './app/student/notification/Notification';
 import NotificationDetails from './app/student/notification/NotificationDetails';
 import { NotificationProvider } from './context/NotificationContext';
 import { ToastProvider } from './context/ToastContext';
+
 import { ThemeProvider } from './context/ThemeContext';
 import Complaints from './app/student/complaints/Complaints';
 import ComplaintDetails from './app/student/complaints/ComplaintDetails';
@@ -35,6 +36,9 @@ import Personalisation from './app/admin/settings/Personalisation';
 import Security from './app/admin/settings/Security';
 import Rules from './app/admin/settings/Rules';
 import Profile from './app/admin/profile/Profile';
+import Foodpass from './app/student/requests/foodpass/Foodpass';
+import Profile from './app/student/profile/Profile';
+import Settings from './app/student/settings/Settings';
 
 const App = () => {
   return (
@@ -42,27 +46,30 @@ const App = () => {
       <ThemeProvider>
         <ToastProvider>
           <Routes>
-          <Route path="/" element={<Login />} />
+            <Route path="/" element={<Login />} />
 
 
-          <Route element={<ProtectedRoute allowedRole="student" />}>
-            <Route path="/student" element={
-              <NotificationProvider>
-                <StudentLayout />
-              </NotificationProvider>
-            }>
-              <Route index element={<StudentDashboard />} />
-              <Route path="outpass" element={<Outpass />} />
-              <Route path="outpass/apply" element={<OutpassForm />} />
-              <Route path="outpass/:id" element={<OutpassDetails />} />
-              <Route path="requests" element={<Request />} />
-              <Route path="mess-count" element={<MessCount />} />
-              <Route path="notification" element={<Notification />} />
-              <Route path="notification/:id" element={<NotificationDetails />} />
-              <Route path="complaints" element={<Complaints />} />
-              <Route path="complaints/:id" element={<ComplaintDetails />} />
+            <Route element={<ProtectedRoute allowedRole="student" />}>
+              <Route path="/student" element={
+                <NotificationProvider>
+                  <StudentLayout />
+                </NotificationProvider>
+              }>
+                <Route index element={<StudentDashboard />} />
+                <Route path="outpass" element={<Outpass />} />
+                <Route path="outpass/apply" element={<OutpassForm />} />
+                <Route path="outpass/:id" element={<OutpassDetails />} />
+                <Route path="requests" element={<Request />} />
+                <Route path="mess-count" element={<MessCount />} />
+                <Route path="foodpass" element={<Foodpass />} />
+                <Route path="notification" element={<Notification />} />
+                <Route path="notification/:id" element={<NotificationDetails />} />
+                <Route path="complaints" element={<Complaints />} />
+                <Route path="complaints/:id" element={<ComplaintDetails />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
             </Route>
-          </Route>
 
           <Route element={<ProtectedRoute allowedRole="admin" />}>
             <Route path="/admin" element={<AdminLayout />}>
@@ -89,6 +96,26 @@ const App = () => {
               <Route path="profile" element={<Profile />} />
             </Route>
           </Route>
+            <Route element={<ProtectedRoute allowedRole="admin" />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="students" element={<StudentList />} />
+                <Route path="leave-management" element={<LeaveManagement />} />
+                <Route path="create-student" element={<StudentForm />} />
+                <Route path="student/view/:id" element={<StudentDetails />} />
+                <Route path="student/edit/:id" element={<StudentForm />} />
+                <Route path="faculty" element={<FacultyList />} />
+                <Route path="create-faculty" element={<FacultyForm />} />
+                <Route path="faculty/view/:id" element={<FacultyDetails />} />
+                <Route path="faculty/edit/:id" element={<FacultyForm />} />
+                <Route path="notices" element={<NoticeList />} />
+                <Route path="create-notice" element={<NoticeForm />} />
+                <Route path="notices/view/:id" element={<NoticeDetails />} />
+                <Route path="notices/edit/:id" element={<NoticeForm />} />
+                <Route path="complaints" element={<ComplaintList />} />
+                <Route path="complaints/:id" element={<AdminComplaintDetails />} />
+              </Route>
+            </Route>
           </Routes>
         </ToastProvider>
       </ThemeProvider>

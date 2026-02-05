@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+body {
+  @apply transition-colors duration-200;
+}
+
+
+
 /* Custom Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 4px;
@@ -26,6 +32,8 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
