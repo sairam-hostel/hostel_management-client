@@ -41,6 +41,21 @@ const Request = () => {
                         </div>
                     </div>
                 </button>
+                {/* Food Pass Card */}
+                <button
+                    onClick={() => navigate('/student/foodpass')}
+                    className="w-full text-left bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100 group"
+                >
+                    <div className="flex items-center space-x-4">
+                        <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                            <Utensils className="w-8 h-8 text-green-600" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-semibold text-gray-800">Food Pass</h2>
+                            <p className="text-gray-500 mt-1">Request for food pass</p>
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     );

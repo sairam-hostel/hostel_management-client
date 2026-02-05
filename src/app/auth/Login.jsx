@@ -48,10 +48,14 @@ const Login = () => {
 
         // robustly find the token
         const token = data.access_token || data.data?.access_token || data.token;
+        const studentName = data.name || data.data?.name || data.user?.name || data.student?.name;
 
         if (token) {
           localStorage.setItem('token', token);
           localStorage.setItem('role', 'student');
+          if (studentName) {
+            localStorage.setItem('studentName', studentName);
+          }
           navigate("/student");
         } else {
           console.error("Token not found in response", data);

@@ -16,8 +16,7 @@ const OutpassForm = () => {
         place_to_visit: '',
         address_details: '',
         mode_of_transport: '',
-        expected_in_time: '',
-        proof: null
+        expected_in_time: ''
     });
 
     const handleChange = (e) => {
@@ -70,16 +69,26 @@ const OutpassForm = () => {
             return;
         }
 
-        try {
-            const formDataToSend = new FormData();
-            Object.keys(formData).forEach(key => {
-                if (formData[key] !== null && formData[key] !== undefined) {
-                    formDataToSend.append(key, formData[key]);
-                }
-            });
 
-            // Using the api utility for consistent base URL and headers
-            const response = await api.post('/bs1/leave-outpass', formDataToSend);
+        try {
+            // Construct JSON payload matching the working Postman example
+            const payload = {
+                type: 'outpass',
+                from_date: formData.from_date,
+                to_date: formData.to_date,
+                expected_in_time: formData.expected_in_time, // Send HH:mm as per example
+                request_reason: formData.request_reason,
+                place_to_visit: formData.place_to_visit,
+                address_details: formData.address_details,
+                mode_of_transport: formData.mode_of_transport,
+                // Include other fields if the backend needs them
+                name: formData.name,
+                year: parseInt(formData.year, 10),
+                department: formData.department
+            };
+
+            // Send as JSON (api.post defaults to application/json)
+            const response = await api.post('/bs1/leave-outpass/request', payload);
 
             if (response.status === 200 || response.status === 201) {
                 alert('Outpass Request Submitted Successfully');
@@ -94,8 +103,7 @@ const OutpassForm = () => {
                     place_to_visit: '',
                     address_details: '',
                     mode_of_transport: '',
-                    expected_in_time: '',
-                    proof: null
+                    expected_in_time: ''
                 });
                 e.target.reset(); // Reset file input
                 navigate('/student/outpass'); // Navigate back to history
@@ -272,7 +280,7 @@ const OutpassForm = () => {
                 </div>
 
                 {/* Upload Proof*/}
-                <div className="grid grid-cols-1 gap-2">
+                {/*<div className="grid grid-cols-1 gap-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Upload Proof
                     </label>
@@ -282,7 +290,7 @@ const OutpassForm = () => {
                         onChange={handleChange}
                         className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition-all"
                     />
-                </div>
+                </div>*/}
 
                 {/* Submit Button */}
                 <div className="pt-4">
