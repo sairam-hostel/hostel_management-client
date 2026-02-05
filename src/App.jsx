@@ -31,14 +31,18 @@ import StudentDetails from './app/admin/students/StudentDetails';
 import AdminDashboard from './app/admin/dashboard/AdminDashboard';
 import ComplaintList from './app/admin/complaints/ComplaintList';
 import AdminComplaintDetails from './app/admin/complaints/ComplaintDetails';
-import Settings from './app/admin/settings/Settings';
+
+// Admin Imports with Aliases
+import AdminSettings from './app/admin/settings/Settings';
 import Personalisation from './app/admin/settings/Personalisation';
 import Security from './app/admin/settings/Security';
 import Rules from './app/admin/settings/Rules';
-import Profile from './app/admin/profile/Profile';
+import AdminProfile from './app/admin/profile/Profile';
+
+// Student Imports with Aliases
 import Foodpass from './app/student/requests/foodpass/Foodpass';
-import Profile from './app/student/profile/Profile';
-import Settings from './app/student/settings/Settings';
+import StudentProfile from './app/student/profile/Profile';
+import StudentSettings from './app/student/settings/Settings';
 
 const App = () => {
   return (
@@ -66,8 +70,8 @@ const App = () => {
                 <Route path="notification/:id" element={<NotificationDetails />} />
                 <Route path="complaints" element={<Complaints />} />
                 <Route path="complaints/:id" element={<ComplaintDetails />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="settings" element={<Settings />} />
+                <Route path="profile" element={<StudentProfile />} />
+                <Route path="settings" element={<StudentSettings />} />
               </Route>
             </Route>
 
@@ -89,33 +93,13 @@ const App = () => {
               <Route path="notices/edit/:id" element={<NoticeForm />} />
               <Route path="complaints" element={<ComplaintList />} />
               <Route path="complaints/:id" element={<AdminComplaintDetails />} />
-              <Route path="settings" element={<Settings />} />
+              <Route path="settings" element={<AdminSettings />} />
               <Route path="settings/personalisation" element={<Personalisation />} />
               <Route path="settings/security" element={<Security />} />
               <Route path="settings/rules" element={<Rules />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="profile" element={<AdminProfile />} />
             </Route>
           </Route>
-            <Route element={<ProtectedRoute allowedRole="admin" />}>
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="students" element={<StudentList />} />
-                <Route path="leave-management" element={<LeaveManagement />} />
-                <Route path="create-student" element={<StudentForm />} />
-                <Route path="student/view/:id" element={<StudentDetails />} />
-                <Route path="student/edit/:id" element={<StudentForm />} />
-                <Route path="faculty" element={<FacultyList />} />
-                <Route path="create-faculty" element={<FacultyForm />} />
-                <Route path="faculty/view/:id" element={<FacultyDetails />} />
-                <Route path="faculty/edit/:id" element={<FacultyForm />} />
-                <Route path="notices" element={<NoticeList />} />
-                <Route path="create-notice" element={<NoticeForm />} />
-                <Route path="notices/view/:id" element={<NoticeDetails />} />
-                <Route path="notices/edit/:id" element={<NoticeForm />} />
-                <Route path="complaints" element={<ComplaintList />} />
-                <Route path="complaints/:id" element={<AdminComplaintDetails />} />
-              </Route>
-            </Route>
           </Routes>
         </ToastProvider>
       </ThemeProvider>

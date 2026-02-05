@@ -22,8 +22,20 @@ export const ThemeProvider = ({ children }) => {
         setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
     };
 
+    const [accentColor, setAccentColor] = useState(() => {
+        if (typeof window !== 'undefined' && localStorage.getItem('accentColor')) {
+            return localStorage.getItem('accentColor');
+        }
+        return '#9333ea'; // Default purple-600
+    });
+
+    const updateAccentColor = (color) => {
+        setAccentColor(color);
+        localStorage.setItem('accentColor', color);
+    };
+
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, toggleTheme, accentColor, updateAccentColor }}>
             {children}
         </ThemeContext.Provider>
     );
