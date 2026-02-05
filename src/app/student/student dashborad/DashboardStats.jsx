@@ -3,7 +3,7 @@ import { Utensils, Percent, Home, CalendarCheck, CheckCircle, XCircle } from 'lu
 
 const DashboardStats = ({ profileData }) => {
     // Safe defaults
-    const attendance = 87; // Hardcoded placeholder
+    const attendance = profileData?.attendance || profileData?.attendance_percentage || 0;
     const foodType = profileData?.food_type || "Not Selected";
     const isVeg = foodType.toLowerCase() === 'veg';
     const hostelName = profileData?.hostel_block || "Block A";
