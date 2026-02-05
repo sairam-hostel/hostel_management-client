@@ -48,7 +48,8 @@ const ApiTableManager = ({
   title = "List",
   searchPlaceholder = "Search...",
   headerActions,
-  noDataComponent
+  noDataComponent,
+  dataTransformer 
 }) => {
   const { accentColor } = useTheme();
   const [data, setData] = useState([]);
@@ -102,21 +103,34 @@ const ApiTableManager = ({
         const responseData = response.data;
 
         // Handle standardized pagination response structure
+        let rawData = [];
+        let totalItems = 0;
+
         if (responseData.pagination && Array.isArray(responseData.data)) {
-          setData(responseData.data);
-          setTotal(responseData.pagination.total_items || 0);
+          rawData = responseData.data;
+          totalItems = responseData.pagination.total_items || 0;
         } else if (responseData.data && Array.isArray(responseData.data)) {
            // Fallback for previous structure
-           setData(responseData.data);
-           setTotal(responseData.total || responseData.count || responseData.data.length || 0);
+           rawData = responseData.data;
+           totalItems = responseData.total || responseData.count || responseData.data.length || 0;
         } else if (Array.isArray(responseData)) {
           // Fallback for direct array response
-          setData(responseData);
-          setTotal(responseData.length);
-        } else {
-          setData([]);
-          setTotal(0);
+          rawData = responseData;
+          totalItems = responseData.length;
         }
+
+        // Apply data transformation if provided (e.g. for fetching related data)
+        if (dataTransformer && typeof dataTransformer === 'function') {
+           try {
+             rawData = await dataTransformer(rawData);
+           } catch (transformErr) {
+             console.error('Error transforming data:', transformErr);
+             // Optionally handle partial failure or just show raw data
+           }
+        }
+
+        setData(rawData);
+        setTotal(totalItems);
       } else {
         setData([]);
         setTotal(0);
