@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomDropdown from '../../../../component/CustomDropdown';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -6,8 +6,9 @@ import api from '../../../../utils/api';
 
 const OutpassForm = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = React.useState({
-        name: '', // Keep for UI, but might not be needed for API if token handles it
+    const [isProfileLoaded, setIsProfileLoaded] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
         year: '',
         department: '',
         from_date: '',
@@ -18,6 +19,27 @@ const OutpassForm = () => {
         mode_of_transport: '',
         expected_in_time: ''
     });
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await api.get('/bs1/profile');
+                if (response.data && response.data.success) {
+                    const { name, department, year } = response.data.data;
+                    setFormData(prev => ({
+                        ...prev,
+                        name: name || '',
+                        department: department || '',
+                        year: year ? year.toString() : ''
+                    }));
+                    setIsProfileLoaded(true);
+                }
+            } catch (error) {
+                console.error("Failed to fetch profile", error);
+            }
+        };
+        fetchProfile();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -119,168 +141,180 @@ const OutpassForm = () => {
     const today = new Date().toISOString().split("T")[0];
 
     return (
-        <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-md">
-            <div className="flex items-center mb-6 border-b pb-2">
-                <button
-                    onClick={() => navigate('/student/outpass')}
-                    className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                    <ArrowLeft size={20} className="text-gray-600" />
-                </button>
-                <h2 className="text-2xl font-bold text-gray-800">Apply for Outpass</h2>
-            </div>
+        <div className="max-w-3xl mx-auto space-y-6">
+            <button
+                onClick={() => navigate('/student/outpass')}
+                className="flex items-center gap-2 text-gray-600 hover:text-purple-700 transition font-medium"
+            >
+                <ArrowLeft size={20} />
+                Back to History
+            </button>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-
-                {/* Name */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                        placeholder="Enter your full name"
-                    />
+            <div className="bg-white p-8 rounded-xl shadow-md">
+                <div className="flex items-center mb-6 border-b pb-2">
+                    <h2 className="text-2xl font-bold text-gray-800">Apply for Outpass</h2>
                 </div>
 
-                {/* Year and Department Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                <form onSubmit={handleSubmit} className="space-y-5">
 
-                        <CustomDropdown
-                            options={[
-                                { label: '1st Year', value: '1' },
-                                { label: '2nd Year', value: '2' },
-                                { label: '3rd Year', value: '3' },
-                                { label: '4th Year', value: '4' }
-                            ]}
-                            value={formData.year}
-                            onChange={(value) => handleChange({ target: { name: 'year', value } })}
-                            placeholder="Select Year"
-                        />
-                    </div>
-
+                    {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                         <input
                             type="text"
-                            name="department"
-                            value={formData.department}
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            readOnly={isProfileLoaded}
+                            className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all ${isProfileLoaded ? 'bg-gray-100 text-gray-900 font-bold cursor-not-allowed' : ''}`}
+                            placeholder="Enter your full name"
+                        />
+                    </div>
+
+                    {/* Year and Department Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+
+                            {isProfileLoaded ? (
+                                <input
+                                    type="text"
+                                    value={formData.year ? `${formData.year}${['st', 'nd', 'rd', 'th'][formData.year - 1] || 'th'} Year` : ''}
+                                    readOnly
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 font-bold cursor-not-allowed outline-none"
+                                />
+                            ) : (
+                                <CustomDropdown
+                                    options={[
+                                        { label: '1st Year', value: '1' },
+                                        { label: '2nd Year', value: '2' },
+                                        { label: '3rd Year', value: '3' },
+                                        { label: '4th Year', value: '4' }
+                                    ]}
+                                    value={formData.year}
+                                    onChange={(value) => handleChange({ target: { name: 'year', value } })}
+                                    placeholder="Select Year"
+                                />
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                            <input
+                                type="text"
+                                name="department"
+                                value={formData.department}
+                                onChange={handleChange}
+                                readOnly={isProfileLoaded}
+                                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all ${isProfileLoaded ? 'bg-gray-100 text-gray-900 font-bold cursor-not-allowed' : ''}`}
+                                placeholder="e.g. CSE, IT, ECE"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Date Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                            <input
+                                type="date"
+                                name="from_date"
+                                value={formData.from_date}
+                                onChange={handleChange}
+                                min={today}
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                            <input
+                                type="date"
+                                name="to_date"
+                                value={formData.to_date}
+                                onChange={handleChange}
+                                min={formData.from_date || today}
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Time and Transport Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Expected In Time</label>
+                            <input
+                                type="time"
+                                name="expected_in_time"
+                                value={formData.expected_in_time}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Mode of Transport</label>
+                            <CustomDropdown
+                                options={[
+                                    { label: 'Bus', value: 'Bus' },
+                                    { label: 'Train', value: 'Train' },
+                                    { label: 'Bike', value: 'Bike' },
+                                    { label: 'Car', value: 'Car' },
+                                    { label: 'Walk', value: 'Walk' }
+                                ]}
+                                value={formData.mode_of_transport}
+                                onChange={(value) => handleChange({ target: { name: 'mode_of_transport', value } })}
+                                placeholder="Select Mode"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Place and Address Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Place to Visit</label>
+                            <input
+                                type="text"
+                                name="place_to_visit"
+                                value={formData.place_to_visit}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                placeholder="e.g. City Center, Home"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Address Details</label>
+                            <input
+                                type="text"
+                                name="address_details"
+                                value={formData.address_details}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                placeholder="e.g. 123 Main St, Bangalore"
+                            />
+                        </div>
+                    </div>
+
+                    {/*Reason*/}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                        <textarea
+                            name="request_reason"
+                            value={formData.request_reason}
                             onChange={handleChange}
                             required
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                            placeholder="e.g. CSE, IT, ECE"
-                        />
-                    </div>
-                </div>
-
-                {/* Date Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                        <input
-                            type="date"
-                            name="from_date"
-                            value={formData.from_date}
-                            onChange={handleChange}
-                            min={today}
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                            placeholder="Enter the reason for your outpass"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                        <input
-                            type="date"
-                            name="to_date"
-                            value={formData.to_date}
-                            onChange={handleChange}
-                            min={formData.from_date || today}
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                        />
-                    </div>
-                </div>
-
-                {/* Time and Transport Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Expected In Time</label>
-                        <input
-                            type="time"
-                            name="expected_in_time"
-                            value={formData.expected_in_time}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Mode of Transport</label>
-                        <CustomDropdown
-                            options={[
-                                { label: 'Bus', value: 'Bus' },
-                                { label: 'Train', value: 'Train' },
-                                { label: 'Bike', value: 'Bike' },
-                                { label: 'Car', value: 'Car' },
-                                { label: 'Walk', value: 'Walk' }
-                            ]}
-                            value={formData.mode_of_transport}
-                            onChange={(value) => handleChange({ target: { name: 'mode_of_transport', value } })}
-                            placeholder="Select Mode"
-                        />
-                    </div>
-                </div>
-
-                {/* Place and Address Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Place to Visit</label>
-                        <input
-                            type="text"
-                            name="place_to_visit"
-                            value={formData.place_to_visit}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                            placeholder="e.g. City Center, Home"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Address Details</label>
-                        <input
-                            type="text"
-                            name="address_details"
-                            value={formData.address_details}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                            placeholder="e.g. 123 Main St, Bangalore"
-                        />
-                    </div>
-                </div>
-
-                {/*Reason*/}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-                    <textarea
-                        name="request_reason"
-                        value={formData.request_reason}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                        placeholder="Enter the reason for your outpass"
-                    />
-                </div>
-
-                {/* Upload Proof*/}
-                {/*<div className="grid grid-cols-1 gap-2">
+                    {/* Upload Proof*/}
+                    {/*<div className="grid grid-cols-1 gap-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Upload Proof
                     </label>
@@ -292,17 +326,18 @@ const OutpassForm = () => {
                     />
                 </div>*/}
 
-                {/* Submit Button */}
-                <div className="pt-4">
-                    <button
-                        type="submit"
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
-                    >
-                        Submit Request
-                    </button>
-                </div>
+                    {/* Submit Button */}
+                    <div className="pt-4">
+                        <button
+                            type="submit"
+                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
+                        >
+                            Submit Request
+                        </button>
+                    </div>
 
-            </form>
+                </form>
+            </div>
         </div>
     );
 };

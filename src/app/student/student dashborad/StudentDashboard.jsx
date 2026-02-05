@@ -175,16 +175,16 @@ const StudentDashboard = () => {
                         <div>
                           <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Mentor</p>
                           <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${latestOutpass.mentor_status === 'Approved' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                            <span className={`text-xs font-bold ${latestOutpass.mentor_status === 'Approved' ? 'text-green-700' : 'text-gray-500'}`}>{latestOutpass.mentor_status || 'Pending'}</span>
+                            <div className={`w-2 h-2 rounded-full ${latestOutpass.mentor_status === 'Approved' ? 'bg-green-500' : latestOutpass.mentor_status === 'Rejected' ? 'bg-red-500' : 'bg-gray-300'}`}></div>
+                            <span className={`text-xs font-bold ${latestOutpass.mentor_status === 'Approved' ? 'text-green-700' : latestOutpass.mentor_status === 'Rejected' ? 'text-red-700' : 'text-gray-500'}`}>{latestOutpass.mentor_status || 'Pending'}</span>
                           </div>
                         </div>
                         <div className="w-px h-8 bg-gray-200"></div>
                         <div>
                           <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Warden/HOD</p>
                           <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${latestOutpass.hod_status === 'Approved' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                            <span className={`text-xs font-bold ${latestOutpass.hod_status === 'Approved' ? 'text-green-700' : 'text-gray-500'}`}>{latestOutpass.hod_status || 'Pending'}</span>
+                            <div className={`w-2 h-2 rounded-full ${latestOutpass.hod_status === 'Approved' ? 'bg-green-500' : latestOutpass.hod_status === 'Rejected' ? 'bg-red-500' : 'bg-gray-300'}`}></div>
+                            <span className={`text-xs font-bold ${latestOutpass.hod_status === 'Approved' ? 'text-green-700' : latestOutpass.hod_status === 'Rejected' ? 'text-red-700' : 'text-gray-500'}`}>{latestOutpass.hod_status || 'Pending'}</span>
                           </div>
                         </div>
                       </div>

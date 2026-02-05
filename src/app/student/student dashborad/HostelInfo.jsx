@@ -5,7 +5,7 @@ const HostelInfo = ({ data }) => {
   const hostel = {
     name: data?.hostel_block || "Boys Hostel 1",
     roomNumber: data?.room_number || "305",
-    messPass: data?.food_type || "Non-Veg", 
+    messPass: data?.food_type || "Non-Veg",
     bedNumber: data?.bed_number,
     floor: data?.floor,
     wardenName: data?.warden_name
@@ -47,8 +47,8 @@ const HostelInfo = ({ data }) => {
 
         {hostel.floor && (
           <div>
-             <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Floor</p>
-             <p className="text-sm font-semibold text-gray-900">{hostel.floor}</p>
+            <p className="text-xs text-purple-700 uppercase tracking-wider font-bold mb-1">Floor</p>
+            <p className="text-sm font-semibold text-gray-900">{hostel.floor}</p>
           </div>
         )}
 
