@@ -84,12 +84,10 @@ const NotificationDetails = () => {
         <div className="max-w-4xl mx-auto px-4 py-8">
             <button
                 onClick={() => navigate('/student/notification')}
-                className="group flex items-center gap-2 text-gray-500 hover:text-purple-600 mb-8 transition-colors"
+                className="flex items-center gap-2 text-gray-600 hover:text-purple-700 transition font-medium mb-8"
             >
-                <div className="p-2 rounded-full group-hover:bg-purple-50 transition-colors">
-                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                </div>
-                <span className="font-medium">Back to Notifications</span>
+                <ArrowLeft size={20} />
+                Back to Notifications
             </button>
 
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">

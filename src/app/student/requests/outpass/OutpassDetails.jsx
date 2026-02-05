@@ -78,12 +78,10 @@ const OutpassDetails = () => {
         <div className="max-w-4xl mx-auto p-6">
             <button
                 onClick={() => navigate('/student/outpass')}
-                className="flex items-center text-gray-600 hover:text-purple-600 transition-colors mb-6 group"
+                className="flex items-center gap-2 text-gray-600 hover:text-purple-700 transition font-medium mb-6"
             >
-                <div className="p-2 rounded-full group-hover:bg-purple-50 mr-2 transition-colors">
-                    <ArrowLeft size={20} />
-                </div>
-                <span className="font-medium">Back to History</span>
+                <ArrowLeft size={20} />
+                Back to History
             </button>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
