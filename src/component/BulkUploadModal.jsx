@@ -7,7 +7,8 @@ import api from '../utils/api';
 const UPLOAD_CONFIG = {
   student: {
     title: 'Bulk Upload Students',
-    endpoint: '/bf1/accounts/students/register',
+    endpoint: '/bf1/accounts/students/register/bulk',
+    isBulk: true,
     templateName: 'Student_Upload_Template.xlsx',
     templateData: [
       {
@@ -46,7 +47,8 @@ const UPLOAD_CONFIG = {
   },
   faculty: {
     title: 'Bulk Upload Faculty',
-    endpoint: '/bf1/accounts/faculty/register',
+    endpoint: '/bf1/accounts/faculty/register/bulk',
+    isBulk: true,
     templateName: 'Faculty_Upload_Template.xlsx',
     templateData: [
       {
@@ -130,34 +132,57 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess, type = 'student' }) => {
 
         setProgress({ total: jsonData.length, current: 0, success: 0, failed: 0 });
 
-        let failedCount = 0;
+        if (config.isBulk) {
+             // BULK UPLOAD LOGIC
+             try {
+                const payload = jsonData.map(row => config.mapRow(row));
+                
+                await api.post(config.endpoint, payload);
+                
+                setProgress({ total: jsonData.length, current: jsonData.length, success: jsonData.length, failed: 0 });
+                setLogs(prev => [...prev, { type: 'success', message: `Successfully uploaded ${jsonData.length} records.` }]);
+                
+                if (onSuccess) onSuccess();
+                showToast(`${config.title} completed successfully`, 'success');
 
-        for (let i = 0; i < jsonData.length; i++) {
-          const row = jsonData[i];
-          setProgress(prev => ({ ...prev, current: i + 1 }));
+             } catch (err) {
+                console.error('Bulk upload error:', err);
+                const errorMsg = err.response?.data?.message || err.message || 'Bulk upload failed';
+                setProgress({ total: jsonData.length, current: jsonData.length, success: 0, failed: jsonData.length });
+                setLogs(prev => [...prev, { type: 'error', message: `Bulk Upload Failed: ${errorMsg}` }]);
+                showToast(`Upload failed: ${errorMsg}`, 'error');
+             }
 
-          try {
-             const payload = config.mapRow(row);
-             
-             await api.post(config.endpoint, payload);
-             
-             setProgress(prev => ({ ...prev, success: prev.success + 1 }));
-             setLogs(prev => [...prev, { type: 'success', message: `Row ${i + 2}: Added ${payload.name}` }]); 
-
-          } catch (err) {
-            console.error(err);
-            const errorMsg = err.response?.data?.message || err.message || 'Unknown error';
-            failedCount++;
-            setProgress(prev => ({ ...prev, failed: prev.failed + 1 }));
-            setLogs(prev => [...prev, { type: 'error', message: `Row ${i + 2}: Failed - ${errorMsg}` }]);
-          }
-        }
-        
-        if (failedCount === 0) {
-            if (onSuccess) onSuccess(); 
-            showToast(`${config.title} completed successfully`, 'success');
         } else {
-            showToast(`${config.title} completed with ${failedCount} errors`, 'warning');
+            // ROW-BY-ROW LOGIC (Legacy/Faculty)
+            let failedCount = 0;
+            for (let i = 0; i < jsonData.length; i++) {
+              const row = jsonData[i];
+              setProgress(prev => ({ ...prev, current: i + 1 }));
+
+              try {
+                const payload = config.mapRow(row);
+                
+                await api.post(config.endpoint, payload);
+                
+                setProgress(prev => ({ ...prev, success: prev.success + 1 }));
+                setLogs(prev => [...prev, { type: 'success', message: `Row ${i + 2}: Added ${payload.name}` }]); 
+
+              } catch (err) {
+                console.error(err);
+                const errorMsg = err.response?.data?.message || err.message || 'Unknown error';
+                failedCount++;
+                setProgress(prev => ({ ...prev, failed: prev.failed + 1 }));
+                setLogs(prev => [...prev, { type: 'error', message: `Row ${i + 2}: Failed - ${errorMsg}` }]);
+              }
+            }
+            
+            if (failedCount === 0) {
+                if (onSuccess) onSuccess(); 
+                showToast(`${config.title} completed successfully`, 'success');
+            } else {
+                showToast(`${config.title} completed with ${failedCount} errors`, 'warning');
+            }
         }
 
       } catch (err) {
