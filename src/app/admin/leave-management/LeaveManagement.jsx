@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, Calendar, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, FileText } from 'lucide-react';
 import ApiTableManager from '../../../component/ApiTableManager';
 import api from '../../../utils/api';
 import { useToast } from '../../../context/ToastContext';
@@ -64,81 +64,75 @@ const LeaveManagement = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-700';
-      case 'rejected': return 'bg-red-100 text-red-700';
-      case 'pending': return 'bg-yellow-100 text-yellow-700';
-      default: return 'bg-gray-100 text-gray-700';
-    }
-  };
+
 
   const columns = [
     {
-      header: 'Type & Reason',
+      header: 'Student Name',
+      accessor: 'student_name',
       render: (request) => (
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${request.type === 'outpass' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-              {request.type}
-            </span>
-          </div>
-          <p className="text-sm font-medium text-gray-900">{request.request_reason || 'No reason'}</p>
-          <div className="text-xs text-gray-500 flex items-center gap-1">
-            <FileText size={10} />
-            {request.place_to_visit || 'N/A'}
-          </div>
-        </div>
-      ),
-    },
-    {
-      header: 'Duration',
-      render: (request) => (
-        <div className="text-sm text-gray-600 space-y-1">
-           <div className="flex items-center gap-1">
-             <Calendar size={12} className="text-gray-400"/>
-             <span>From: {new Date(request.from_date).toLocaleDateString()} {new Date(request.from_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-           </div>
-           <div className="flex items-center gap-1">
-             <Calendar size={12} className="text-gray-400"/>
-             <span>To: {new Date(request.to_date).toLocaleDateString()} {new Date(request.to_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-           </div>
-        </div>
-      ),
-    },
-    {
-      header: 'Current Status',
-      render: (request) => (
-         <div className="space-y-1">
-            <div className="flex justify-between items-center gap-2 text-xs">
-               <span className="text-gray-500">Mentor:</span>
-               <span className={`px-1.5 py-0.5 rounded capitalize ${getStatusColor(request.mentor_status || 'pending')}`}>
-                 {request.mentor_status || 'Pending'}
-               </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 text-xs">
-               <span className="text-gray-500">HOD:</span>
-                <span className={`px-1.5 py-0.5 rounded capitalize ${getStatusColor(request.hod_status || 'pending')}`}>
-                 {request.hod_status || 'Pending'}
-               </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 text-xs font-semibold">
-               <span className="text-gray-700">Admin:</span>
-                <span className={`px-1.5 py-0.5 rounded capitalize ${getStatusColor(request.admin_status || 'pending')}`}>
-                 {request.admin_status || 'Pending'}
-               </span>
-            </div>
-         </div>
+        <span className="font-medium text-gray-900">{request.student_name || 'Loading...'}</span>
       )
     },
     {
-       header: 'Overall',
-       accessor: 'status',
-       render: (row) => (
-         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusColor(row.status)}`}>
-           {row.status}
-         </span>
+      header: 'ID',
+      accessor: 'roll_number',
+      render: (request) => (
+        <span className="text-gray-500 font-mono text-xs">{request.roll_number || request.student_id || '-'}</span>
+      )
+    },
+    {
+      header: 'Nature',
+      accessor: 'type',
+      render: (request) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize 
+          ${request.type === 'outpass' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+          {request.type || 'N/A'}
+        </span>
+      )
+    },
+    {
+      header: 'From',
+      render: (request) => (
+        <div className="flex flex-col text-sm text-gray-600">
+           <span className="font-medium">{new Date(request.from_date).toLocaleDateString()}</span>
+           {/* <span className="text-xs text-gray-400">{new Date(request.from_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span> */}
+        </div>
+      )
+    },
+    {
+      header: 'To',
+      render: (request) => (
+         <div className="flex flex-col text-sm text-gray-600">
+           <span className="font-medium">{new Date(request.to_date).toLocaleDateString()}</span>
+           {/* <span className="text-xs text-gray-400">{new Date(request.to_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span> */}
+        </div>
+      )
+    },
+    {
+       header: 'Reason',
+       render: (request) => (
+         <div className="max-w-xs">
+            <p className="text-sm text-gray-900 truncate" title={request.request_reason}>{request.request_reason || 'No reason'}</p>
+            {request.place_to_visit && (
+               <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                  <FileText size={10} /> {request.place_to_visit}
+               </p>
+            )}
+         </div>
        )
+    },
+    {
+      header: 'Current Level',
+      accessor: 'current_level',
+      render: (request) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize 
+          ${request.current_level === 'admin' ? 'bg-purple-100 text-purple-700' :
+            request.current_level === 'hod' ? 'bg-blue-100 text-blue-700' : 
+            'bg-yellow-100 text-yellow-700'}`}>
+           {request.current_level || 'Pending'}
+        </span>
+      )
     }
   ];
 

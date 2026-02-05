@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, ArrowLeft, Loader, Upload, Eye, EyeOff } from 'lucide-react';
+import { Save, ArrowLeft, Loader, Upload, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { useToast } from '../../../context/ToastContext';
 import api from '../../../utils/api';
 import InputField from '../../../component/InputField';
@@ -131,11 +131,38 @@ const StudentForm = () => {
     );
   }
 
-  const SectionHeader = ({ title }) => (
-    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 mt-6 border-b border-gray-100 pb-2">
-      {title}
-    </h3>
-  );
+  const CollapsibleSection = ({ title, children, defaultOpen = false }) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+    
+    return (
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`
+            flex items-center justify-between w-full gap-3 px-4 py-2.5 
+            bg-white border text-sm font-medium rounded-xl shadow-sm transition-all duration-200
+            ${isOpen 
+              ? 'border-purple-500 ring-2 ring-purple-100 text-purple-700' 
+              : 'border-gray-200 text-gray-700 hover:border-purple-300 hover:bg-gray-50'
+            }
+          `}
+        >
+          <span>{title}</span>
+          <ChevronDown 
+            size={16} 
+            className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-purple-500' : ''}`} 
+          />
+        </button>
+        
+        {isOpen && (
+          <div className="mt-4 animate-in slide-in-from-top-2 fade-in duration-200">
+            {children}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="max-w-5xl mx-auto h-[calc(100vh-160px)] flex flex-col overflow-hidden">
@@ -169,94 +196,102 @@ const StudentForm = () => {
         <form className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
           
           {/* Core Identity */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <InputField label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
-            <InputField label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} required />
-            {!isEditMode && (
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">
-                  Password <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password || ''}
-                    onChange={handleChange}
-                    className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm w-full transition-shadow pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+          <CollapsibleSection title="Basic Information" defaultOpen={true}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <InputField label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
+              <InputField label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} required />
+              {!isEditMode && (
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password || ''}
+                      onChange={handleChange}
+                      className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm w-full transition-shadow pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-            <InputField label="Roll Number" name="roll_number" value={formData.roll_number} onChange={handleChange} required />
-            <InputField label="Register Number" name="register_number" value={formData.register_number} onChange={handleChange} required />
-            <InputField label="Batch" name="batch" placeholder="e.g. 2023" value={formData.batch} onChange={handleChange} />
-          </div>
+              )}
+              <InputField label="Roll Number" name="roll_number" value={formData.roll_number} onChange={handleChange} required />
+              <InputField label="Register Number" name="register_number" value={formData.register_number} onChange={handleChange} required />
+              <InputField label="Batch" name="batch" placeholder="e.g. 2023" value={formData.batch} onChange={handleChange} />
+            </div>
+          </CollapsibleSection>
 
-          <SectionHeader title="Academic Information" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <SelectField label="Department" name="department" options={DEPARTMENTS} value={formData.department} onChange={handleChange} required searchable />
-            <SelectField label="Year" name="year" options={["1", "2", "3", "4", "5"]} value={formData.year} onChange={handleChange} required />
-            <InputField label="Section" name="section" value={formData.section} onChange={handleChange} />
-            <InputField label="School Name" name="school_name" value={formData.school_name} onChange={handleChange} />
-            <InputField label="School Board" name="school_board" value={formData.school_board} onChange={handleChange} />
-            <InputField label="School %" name="school_percentage" type="number" step="0.01" value={formData.school_percentage} onChange={handleChange} />
-          </div>
+          <CollapsibleSection title="Academic Information">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <SelectField label="Department" name="department" options={DEPARTMENTS} value={formData.department} onChange={handleChange} required searchable />
+              <SelectField label="Year" name="year" options={["1", "2", "3", "4", "5"]} value={formData.year} onChange={handleChange} required />
+              <InputField label="Section" name="section" value={formData.section} onChange={handleChange} />
+              <InputField label="School Name" name="school_name" value={formData.school_name} onChange={handleChange} />
+              <InputField label="School Board" name="school_board" value={formData.school_board} onChange={handleChange} />
+              <InputField label="School %" name="school_percentage" type="number" step="0.01" value={formData.school_percentage} onChange={handleChange} />
+            </div>
+          </CollapsibleSection>
 
-          <SectionHeader title="Hostel Information" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <InputField label="Block" name="hostel_block" value={formData.hostel_block} onChange={handleChange} required />
-            <InputField label="Room Number" name="room_number" value={formData.room_number} onChange={handleChange} required />
-            <InputField label="Bed Number" name="bed_number" value={formData.bed_number} onChange={handleChange} />
-            <InputField label="Floor" name="floor" type="number" value={formData.floor} onChange={handleChange} />
-            <InputField label="Warden Name" name="warden_name" value={formData.warden_name} onChange={handleChange} />
-            <SelectField label="Status" name="status" options={["in", "out", "waiting"]} value={formData.status} onChange={handleChange} required />
-          </div>
+          <CollapsibleSection title="Hostel Information">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <InputField label="Block" name="hostel_block" value={formData.hostel_block} onChange={handleChange} required />
+              <InputField label="Room Number" name="room_number" value={formData.room_number} onChange={handleChange} required />
+              <InputField label="Bed Number" name="bed_number" value={formData.bed_number} onChange={handleChange} />
+              <InputField label="Floor" name="floor" type="number" value={formData.floor} onChange={handleChange} />
+              <InputField label="Warden Name" name="warden_name" value={formData.warden_name} onChange={handleChange} />
+              <SelectField label="Status" name="status" options={["in", "out", "waiting"]} value={formData.status} onChange={handleChange} required />
+            </div>
+          </CollapsibleSection>
 
-          <SectionHeader title="Personal Information" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <SelectField label="Gender" name="gender" options={["Male", "Female", "Other"]} value={formData.gender} onChange={handleChange} required />
-            <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
-            <SelectField label="Blood Group" name="blood_group" options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]} value={formData.blood_group} onChange={handleChange} />
-            <InputField label="Nationality" name="nationality" value={formData.nationality} onChange={handleChange} />
-            <InputField label="Religion" name="religion" value={formData.religion} onChange={handleChange} />
-            <InputField label="Community" name="community" value={formData.community} onChange={handleChange} />
-          </div>
+          <CollapsibleSection title="Personal Information">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <SelectField label="Gender" name="gender" options={["Male", "Female", "Other"]} value={formData.gender} onChange={handleChange} required />
+              <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} />
+              <SelectField label="Blood Group" name="blood_group" options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]} value={formData.blood_group} onChange={handleChange} />
+              <InputField label="Nationality" name="nationality" value={formData.nationality} onChange={handleChange} />
+              <InputField label="Religion" name="religion" value={formData.religion} onChange={handleChange} />
+              <InputField label="Community" name="community" value={formData.community} onChange={handleChange} />
+            </div>
+          </CollapsibleSection>
 
-          <SectionHeader title="Contact Information" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <InputField label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} required />
-            <InputField label="Alternate Phone" name="alternate_phone" value={formData.alternate_phone} onChange={handleChange} />
-            <InputField label="WhatsApp Number" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} />
-          </div>
+          <CollapsibleSection title="Contact Information">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <InputField label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} required />
+              <InputField label="Alternate Phone" name="alternate_phone" value={formData.alternate_phone} onChange={handleChange} />
+              <InputField label="WhatsApp Number" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} />
+            </div>
+          </CollapsibleSection>
 
-          <SectionHeader title="Family Details" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField label="Father's Name" name="father_name" value={formData.father_name} onChange={handleChange} />
-            <InputField label="Father's Phone" name="father_phone" value={formData.father_phone} onChange={handleChange} />
-            <InputField label="Mother's Name" name="mother_name" value={formData.mother_name} onChange={handleChange} />
-            <InputField label="Mother's Phone" name="mother_phone" value={formData.mother_phone} onChange={handleChange} />
-            <InputField label="Guardian's Name" name="guardian_name" value={formData.guardian_name} onChange={handleChange} />
-            <InputField label="Guardian's Phone" name="guardian_phone" value={formData.guardian_phone} onChange={handleChange} />
-          </div>
+          <CollapsibleSection title="Family Details">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputField label="Father's Name" name="father_name" value={formData.father_name} onChange={handleChange} />
+              <InputField label="Father's Phone" name="father_phone" value={formData.father_phone} onChange={handleChange} />
+              <InputField label="Mother's Name" name="mother_name" value={formData.mother_name} onChange={handleChange} />
+              <InputField label="Mother's Phone" name="mother_phone" value={formData.mother_phone} onChange={handleChange} />
+              <InputField label="Guardian's Name" name="guardian_name" value={formData.guardian_name} onChange={handleChange} />
+              <InputField label="Guardian's Phone" name="guardian_phone" value={formData.guardian_phone} onChange={handleChange} />
+            </div>
+          </CollapsibleSection>
 
-          <SectionHeader title="Address" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField label="Address Line 1" name="address_line_1" className="md:col-span-2" value={formData.address_line_1} onChange={handleChange} />
-            <InputField label="Address Line 2" name="address_line_2" className="md:col-span-2" value={formData.address_line_2} onChange={handleChange} />
-            <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
-            <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
-            <InputField label="Pincode" name="pincode" value={formData.pincode} onChange={handleChange} />
-            <InputField label="Permanent Address" name="permanent_address" className="md:col-span-2" value={formData.permanent_address} onChange={handleChange} />
-          </div>
+          <CollapsibleSection title="Address">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputField label="Address Line 1" name="address_line_1" className="md:col-span-2" value={formData.address_line_1} onChange={handleChange} />
+              <InputField label="Address Line 2" name="address_line_2" className="md:col-span-2" value={formData.address_line_2} onChange={handleChange} />
+              <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
+              <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
+              <InputField label="Pincode" name="pincode" value={formData.pincode} onChange={handleChange} />
+              <InputField label="Permanent Address" name="permanent_address" className="md:col-span-2" value={formData.permanent_address} onChange={handleChange} />
+            </div>
+          </CollapsibleSection>
         </form>
       </div>
     </div>

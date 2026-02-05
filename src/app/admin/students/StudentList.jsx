@@ -6,8 +6,10 @@ import ApiTableManager from '../../../component/ApiTableManager';
 import api from '../../../utils/api';
 import ConfirmationModal from '../../../component/ConfirmationModal';
 import BulkUploadModal from '../../../component/BulkUploadModal';
+import { useTheme } from '../../../context/ThemeContext';
 
 const StudentList = () => {
+  const { accentColor } = useTheme();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, studentId: null });
@@ -43,14 +45,22 @@ const StudentList = () => {
       header: 'Student Info',
       render: (student) => (
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">
+          <div 
+            className="h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs"
+            style={{ backgroundColor: `${accentColor}20`, color: accentColor }}
+          >
             {student.name?.charAt(0) || '?'}
           </div>
           <div 
             onClick={() => navigate(`/admin/student/view/${student.auth_user_id}`)}
             className="cursor-pointer hover:bg-gray-50 rounded p-1 -ml-1 transition-colors"
           >
-            <p className="text-sm font-medium text-purple-700 hover:text-purple-900 hover:underline">{student.name || 'Unknown'}</p>
+            <p 
+              className="text-sm font-medium hover:underline"
+              style={{ color: accentColor }}
+            >
+              {student.name || 'Unknown'}
+            </p>
             <p className="text-xs text-gray-500">{student.roll_number || 'N/A'}</p>
           </div>
         </div>
@@ -121,14 +131,16 @@ const StudentList = () => {
       <div className="flex justify-end mb-4 gap-3">
         <button 
           onClick={() => setIsUploadModalOpen(true)}
-          className="bg-white text-purple-600 border border-purple-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-50 transition-colors flex items-center gap-2"
+          className="bg-white border px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+          style={{ borderColor: accentColor, color: accentColor }}
         >
           <Upload size={16} />
           Upload Excel
         </button>
         <button 
           onClick={() => navigate('/admin/create-student')}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+          className="text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+          style={{ backgroundColor: accentColor }}
         >
           Add New Student
         </button>
