@@ -6,26 +6,6 @@ import api from '../../../../utils/api';
 
 const Outpass = () => {
   const navigate = useNavigate();
-  const [latestOutpass, setLatestOutpass] = useState(null);
-
-  useEffect(() => {
-    const fetchLatest = async () => {
-      try {
-        const response = await api.get('/bs1/leave-outpass');
-        // Assuming response.data is an array or has a data property with array
-        const data = Array.isArray(response.data) ? response.data : response.data.data || [];
-
-        if (data.length > 0) {
-          // Sort by created_at desc to get latest
-          const sorted = [...data].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-          setLatestOutpass(sorted[0]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch latest outpass", error);
-      }
-    };
-    fetchLatest();
-  }, []);
 
   const renderStatusBadge = (status) => {
     const s = status?.toLowerCase() || 'pending';
@@ -106,19 +86,7 @@ const Outpass = () => {
         <HeaderActions />
       </div>
 
-      {/* Current Outpass Status */}
-      {latestOutpass && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700">Current Outpass Status</h2>
-          <ApiTableManager
-            dataSource={[latestOutpass]}
-            columns={columns}
-            actions={actions}
-            title="Latest Request"
-            searchPlaceholder="Search..."
-          />
-        </div>
-      )}
+
 
       {/* History */}
       <div className="space-y-4">

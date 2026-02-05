@@ -138,10 +138,11 @@ const StudentDashboard = () => {
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-6">
                       <div>
-                        <span className="inline-block px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">Request ID: #{latestOutpass._id?.slice(-6).toUpperCase()}</span>
+                        <span className="inline-block px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">
+                          {latestOutpass.type} Request
+                        </span>
                         <h3 className="text-2xl font-bold text-gray-900 capitalize flex items-center gap-2">
-                          {latestOutpass.type}
-                          {renderStatusBadge(latestOutpass.admin_status || latestOutpass.hod_status || latestOutpass.mentor_status)}
+                          Request Status
                         </h3>
                       </div>
                     </div>
@@ -171,17 +172,32 @@ const StudentDashboard = () => {
                     </div>
 
                     <div className="mt-6 flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-8">
-                        <div>
+                      <div className="flex items-center gap-8 w-full">
+                        {/* Mentor Status */}
+                        <div className="flex-1">
                           <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Mentor</p>
                           <div className="flex items-center gap-2">
                             <div className={`w-2 h-2 rounded-full ${latestOutpass.mentor_status === 'Approved' ? 'bg-green-500' : latestOutpass.mentor_status === 'Rejected' ? 'bg-red-500' : 'bg-gray-300'}`}></div>
                             <span className={`text-xs font-bold ${latestOutpass.mentor_status === 'Approved' ? 'text-green-700' : latestOutpass.mentor_status === 'Rejected' ? 'text-red-700' : 'text-gray-500'}`}>{latestOutpass.mentor_status || 'Pending'}</span>
                           </div>
                         </div>
+
                         <div className="w-px h-8 bg-gray-200"></div>
-                        <div>
-                          <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Warden/HOD</p>
+
+                        {/* Warden Status */}
+                        <div className="flex-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Warden</p>
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${latestOutpass.admin_status === 'Approved' ? 'bg-green-500' : latestOutpass.admin_status === 'Rejected' ? 'bg-red-500' : 'bg-gray-300'}`}></div>
+                            <span className={`text-xs font-bold ${latestOutpass.admin_status === 'Approved' ? 'text-green-700' : latestOutpass.admin_status === 'Rejected' ? 'text-red-700' : 'text-gray-500'}`}>{latestOutpass.admin_status || 'Pending'}</span>
+                          </div>
+                        </div>
+
+                        <div className="w-px h-8 bg-gray-200"></div>
+
+                        {/* HOD Status */}
+                        <div className="flex-1">
+                          <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">HOD</p>
                           <div className="flex items-center gap-2">
                             <div className={`w-2 h-2 rounded-full ${latestOutpass.hod_status === 'Approved' ? 'bg-green-500' : latestOutpass.hod_status === 'Rejected' ? 'bg-red-500' : 'bg-gray-300'}`}></div>
                             <span className={`text-xs font-bold ${latestOutpass.hod_status === 'Approved' ? 'text-green-700' : latestOutpass.hod_status === 'Rejected' ? 'text-red-700' : 'text-gray-500'}`}>{latestOutpass.hod_status || 'Pending'}</span>
