@@ -16,12 +16,14 @@ const ComplaintList = () => {
   const columns = [
     {
       header: 'Student Info',
-      render: (complaint) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-gray-900">{complaint.student_name || 'Unknown Student'}</span>
-          <span className="text-xs text-gray-500">{complaint.student_roll || 'N/A'}</span>
-        </div>
-      ),
+      render: (complaint) => {
+        return (
+          <div className="flex flex-col">
+            <span className="font-medium text-gray-900">{complaint.student_name || 'Unknown Student'}</span>
+            <span className="text-xs text-gray-500">{complaint.student_roll || 'N/A'}</span>
+          </div>
+        );
+      },
     },
     {
       header: 'Complaint',
@@ -38,7 +40,7 @@ const ComplaintList = () => {
         const normalizedStatus = (complaint.status || 'pending').toLowerCase();
         const statusConfig = STATUS_CONFIG[normalizedStatus] || STATUS_CONFIG['pending'];
         const Icon = statusConfig.icon;
-        
+
         return (
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium gap-1 ${statusConfig.color}`}>
             <Icon size={12} />
@@ -59,7 +61,7 @@ const ComplaintList = () => {
 
   const actions = (complaint) => (
     <button
-      onClick={() => navigate(`/admin/complaints/${complaint._id || complaint.id}`)}
+      onClick={() => navigate(`/admin/complaints/${complaint.complaint_id || complaint._id || complaint.id}`)}
       className="text-purple-600 hover:text-purple-900 p-1 rounded-full hover:bg-purple-50 transition-colors"
       title="View Details"
     >

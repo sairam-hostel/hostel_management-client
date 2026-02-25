@@ -11,6 +11,7 @@ const AdminDashboard = () => {
     students: 0,
     faculty: 0,
     notices: 0,
+    pendingComplaints: 0,
     recentNotices: []
   });
   const [loading, setLoading] = useState(true);
@@ -23,35 +24,41 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [studentsRes, facultyRes, noticesRes] = await Promise.allSettled([
-           api.get('/bf1/accounts/students'),
-           api.get('/bf1/accounts/faculty'),
-           api.get('/bf1/notices')
+        const [studentsRes, facultyRes, noticesRes, complaintsRes] = await Promise.allSettled([
+          api.get('/bf1/accounts/students'),
+          api.get('/bf1/accounts/faculty'),
+          api.get('/bf1/notices'),
+          api.get('/bf1/complaints')
         ]);
 
-        const studentsData = studentsRes.status === 'fulfilled' 
-           ? (studentsRes.value.data.data || studentsRes.value.data || []) 
-           : [];
-           
+        const studentsData = studentsRes.status === 'fulfilled'
+          ? (studentsRes.value.data.data || studentsRes.value.data || [])
+          : [];
+
         const studentCount = studentsData.length;
 
         const facultyCount = facultyRes.status === 'fulfilled'
-           ? (facultyRes.value.data.data?.length || facultyRes.value.data?.length || 0)
-           : 0;
-           
+          ? (facultyRes.value.data.data?.length || facultyRes.value.data?.length || 0)
+          : 0;
+
         const noticesData = noticesRes.status === 'fulfilled'
-           ? (noticesRes.value.data.data || noticesRes.value.data || [])
-           : [];
+          ? (noticesRes.value.data.data || noticesRes.value.data || [])
+          : [];
         const noticesCount = noticesData.length;
 
+        const complaintsData = complaintsRes.status === 'fulfilled'
+          ? (complaintsRes.value.data.data || complaintsRes.value.data || [])
+          : [];
+        const pendingComplaintsCount = complaintsData.filter(c => (c.status || '').toLowerCase() === 'pending').length;
+
         // Sort notices by date (assuming id or created_at usually correlates, but simpler to take last 3)
-        // In a real app we'd sort by date field. Here taking last 3 for 'recent'.
         const recentNotices = noticesData.slice(-3).reverse();
 
         setStats({
           students: studentCount,
           faculty: facultyCount,
           notices: noticesCount,
+          pendingComplaints: pendingComplaintsCount,
           recentNotices: recentNotices
         });
 
@@ -74,7 +81,7 @@ const AdminDashboard = () => {
       const dept = s.department || 'Other';
       deptMap[dept] = (deptMap[dept] || 0) + 1;
     });
-    
+
     const deptData = Object.keys(deptMap).map(key => ({ value: deptMap[key], name: key }));
 
     setDeptOption({
@@ -104,7 +111,7 @@ const AdminDashboard = () => {
         data: deptData.map(d => d.name),
         axisLine: { show: false },
         axisTick: { show: false },
-        axisLabel: { 
+        axisLabel: {
           color: '#4b5563',
           fontWeight: 500,
           width: 100, // Limit width to prevent overflow
@@ -129,11 +136,11 @@ const AdminDashboard = () => {
             }
           },
           label: {
-             show: true,
-             position: 'right',
-             formatter: '{c}',
-             color: '#6b7280',
-             fontSize: 12
+            show: true,
+            position: 'right',
+            formatter: '{c}',
+            color: '#6b7280',
+            fontSize: 12
           }
         }
       ]
@@ -203,14 +210,14 @@ const AdminDashboard = () => {
   };
 
   const StatCard = ({ title, count, icon: Icon, colorClass, link, trend }) => (
-    <div 
+    <div
       onClick={() => navigate(link)}
       className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
     >
       <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${colorClass}`}>
         <Icon size={80} />
       </div>
-      
+
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className={`p-2.5 rounded-lg ${colorClass} bg-opacity-10 text-current`}>
@@ -222,7 +229,7 @@ const AdminDashboard = () => {
             </div>
           )}
         </div>
-        
+
         <h3 className="text-3xl font-bold text-gray-900 mb-1">{loading ? '-' : count}</h3>
         <p className="text-gray-500 text-sm font-medium">{title}</p>
       </div>
@@ -231,7 +238,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
@@ -239,175 +246,183 @@ const AdminDashboard = () => {
           <p className="text-gray-500 text-sm mt-1">Overview of hostel performance and activities.</p>
         </div>
         <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
-           <Calendar size={18} className="text-gray-400" />
-           <span className="text-sm font-medium text-gray-600">
-             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-           </span>
+          <Calendar size={18} className="text-gray-400" />
+          <span className="text-sm font-medium text-gray-600">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </span>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard 
-          title="Total Students" 
-          count={stats.students} 
-          icon={GraduationCap} 
+        <StatCard
+          title="Total Students"
+          count={stats.students}
+          icon={GraduationCap}
           colorClass="text-purple-600"
           link="/admin/students"
           trend="+12% this month"
         />
-        <StatCard 
-          title="Faculty & Wardens" 
-          count={stats.faculty} 
-          icon={School} 
+        <StatCard
+          title="Faculty & Wardens"
+          count={stats.faculty}
+          icon={School}
           colorClass="text-blue-600"
           link="/admin/faculty"
           trend="Stable"
         />
-        <StatCard 
-          title="Active Notices" 
-          count={stats.notices} 
-          icon={Bell} 
+        <StatCard
+          title="Active Notices"
+          count={stats.notices}
+          icon={Bell}
           colorClass="text-orange-500"
           link="/admin/notices"
           trend="3 New today"
         />
+        <StatCard
+          title="Pending Complaints"
+          count={stats.pendingComplaints}
+          icon={Activity}
+          colorClass="text-red-600"
+          link="/admin/complaints"
+          trend={`${stats.pendingComplaints} Urgent`}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-         
-         {/* Charts Group */}
-         <div className="lg:col-span-2 space-y-8">
-            {/* Analytics */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">Enrollment Analytics</h3>
-                    <p className="text-sm text-gray-500 mt-1">Distribution overview</p>
-                  </div>
-                  <div className="w-56">
-                    <CustomDropdown 
-                      options={[
-                        { label: 'Current Academic Year', value: 'Current Academic Year' },
-                        { label: 'Previous Year', value: 'Previous Year' }
-                      ]}
-                      value={timeframe}
-                      onChange={setTimeframe}
-                      icon={Calendar}
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"> 
-                   {/* Divider for desktop */}
-                   <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gray-100 transform -translate-x-1/2"></div>
 
-                   <div className="h-[320px] w-full">
-                      <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
-                        <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Department</p>
-                      </div>
-                      {stats.students > 0 ? (
-                         <ReactECharts option={deptOption} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
-                      ) : (
-                         <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
-                            <div className="p-4 bg-gray-50 rounded-full"><School size={24} /></div>
-                            <span className="text-sm font-medium">No Department Data</span>
-                         </div>
-                      )}
-                   </div>
-
-                   <div className="h-[480px] w-full">
-                      <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                        <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Year</p>
-                      </div>
-                       {stats.students > 0 ? (
-                         <ReactECharts option={{
-                           ...yearOption,
-                           grid: { ...yearOption.grid, top: '15%', bottom: '5%', left: '5%', right: '5%' } 
-                         }} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
-                      ) : (
-                         <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
-                            <div className="p-4 bg-gray-50 rounded-full"><Calendar size={24} /></div>
-                            <span className="text-sm font-medium">No Year Data</span>
-                         </div>
-                      )}
-                   </div>
-                </div>
+        {/* Charts Group */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Analytics */}
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">Enrollment Analytics</h3>
+                <p className="text-sm text-gray-500 mt-1">Distribution overview</p>
+              </div>
+              <div className="w-56">
+                <CustomDropdown
+                  options={[
+                    { label: 'Current Academic Year', value: 'Current Academic Year' },
+                    { label: 'Previous Year', value: 'Previous Year' }
+                  ]}
+                  value={timeframe}
+                  onChange={setTimeframe}
+                  icon={Calendar}
+                />
+              </div>
             </div>
-         </div>
 
-         {/* Sidebar Area: Recent Activity & Quick Actions */}
-         <div className="space-y-8">
-            
-             {/* Quick Actions */}
-             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                   <button onClick={() => navigate('/admin/create-student')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-purple-50 hover:text-purple-700 text-gray-600 transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-purple-600"><UserPlus size={18} /></div>
-                        <span className="font-medium text-sm">Add Student</span>
-                      </div>
-                      <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                   </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
+              {/* Divider for desktop */}
+              <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gray-100 transform -translate-x-1/2"></div>
 
-                   <button onClick={() => navigate('/admin/create-faculty')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-blue-50 hover:text-blue-700 text-gray-600 transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-blue-600"><Users size={18} /></div>
-                        <span className="font-medium text-sm">Add Faculty</span>
-                      </div>
-                      <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                   </button>
-
-                   <button onClick={() => navigate('/admin/create-notice')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange-50 hover:text-orange-700 text-gray-600 transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-orange-600"><FileText size={18} /></div>
-                        <span className="font-medium text-sm">Post Notice</span>
-                      </div>
-                      <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                   </button>
+              <div className="h-[320px] w-full">
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
+                  <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Department</p>
                 </div>
-             </div>
+                {stats.students > 0 ? (
+                  <ReactECharts option={deptOption} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
+                    <div className="p-4 bg-gray-50 rounded-full"><School size={24} /></div>
+                    <span className="text-sm font-medium">No Department Data</span>
+                  </div>
+                )}
+              </div>
 
-             {/* Recent Activity */}
-             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-800">Recent Notices</h3>
-                  <Activity size={18} className="text-gray-400" />
+              <div className="h-[480px] w-full">
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+                  <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Year</p>
                 </div>
-                
-                <div className="space-y-4">
-                  {loading ? (
-                    <div className="animate-pulse space-y-3">
-                       <div className="h-10 bg-gray-100 rounded"></div>
-                       <div className="h-10 bg-gray-100 rounded"></div>
+                {stats.students > 0 ? (
+                  <ReactECharts option={{
+                    ...yearOption,
+                    grid: { ...yearOption.grid, top: '15%', bottom: '5%', left: '5%', right: '5%' }
+                  }} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
+                    <div className="p-4 bg-gray-50 rounded-full"><Calendar size={24} /></div>
+                    <span className="text-sm font-medium">No Year Data</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar Area: Recent Activity & Quick Actions */}
+        <div className="space-y-8">
+
+          {/* Quick Actions */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+            <div className="space-y-3">
+              <button onClick={() => navigate('/admin/create-student')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-purple-50 hover:text-purple-700 text-gray-600 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-purple-600"><UserPlus size={18} /></div>
+                  <span className="font-medium text-sm">Add Student</span>
+                </div>
+                <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </button>
+
+              <button onClick={() => navigate('/admin/create-faculty')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-blue-50 hover:text-blue-700 text-gray-600 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-blue-600"><Users size={18} /></div>
+                  <span className="font-medium text-sm">Add Faculty</span>
+                </div>
+                <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </button>
+
+              <button onClick={() => navigate('/admin/create-notice')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange-50 hover:text-orange-700 text-gray-600 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-orange-600"><FileText size={18} /></div>
+                  <span className="font-medium text-sm">Post Notice</span>
+                </div>
+                <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </button>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-800">Recent Notices</h3>
+              <Activity size={18} className="text-gray-400" />
+            </div>
+
+            <div className="space-y-4">
+              {loading ? (
+                <div className="animate-pulse space-y-3">
+                  <div className="h-10 bg-gray-100 rounded"></div>
+                  <div className="h-10 bg-gray-100 rounded"></div>
+                </div>
+              ) : stats.recentNotices.length > 0 ? (
+                stats.recentNotices.map((notice, idx) => (
+                  <div key={idx} className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                    <div className="mt-1 w-2 h-2 rounded-full bg-purple-500 shrink-0"></div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 line-clamp-1">{notice.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{notice.category} • {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
                     </div>
-                  ) : stats.recentNotices.length > 0 ? (
-                    stats.recentNotices.map((notice, idx) => (
-                      <div key={idx} className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0 last:pb-0">
-                         <div className="mt-1 w-2 h-2 rounded-full bg-purple-500 shrink-0"></div>
-                         <div>
-                            <p className="text-sm font-medium text-gray-900 line-clamp-1">{notice.title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{notice.category} • {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
-                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-400 text-center py-4">No recent activity</p>
-                  )}
-                </div>
-                
-                <button 
-                  onClick={() => navigate('/admin/notices')}
-                  className="w-full mt-4 text-xs font-medium text-center text-gray-500 hover:text-purple-600 transition-colors"
-                >
-                  View All Activity
-                </button>
-             </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-4">No recent activity</p>
+              )}
+            </div>
 
-         </div>
+            <button
+              onClick={() => navigate('/admin/notices')}
+              className="w-full mt-4 text-xs font-medium text-center text-gray-500 hover:text-purple-600 transition-colors"
+            >
+              View All Activity
+            </button>
+          </div>
+
+        </div>
       </div>
     </div>
   );
