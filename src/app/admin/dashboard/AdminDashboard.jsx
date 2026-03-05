@@ -90,7 +90,7 @@ const AdminDashboard = () => {
       },
       grid: {
         left: '3%',
-        right: '4%',
+        right: '10%',
         bottom: '3%',
         top: '10%',
         containLabel: true
@@ -100,7 +100,8 @@ const AdminDashboard = () => {
         axisLine: { show: false },
         axisTick: { show: false },
         splitLine: { show: true, lineStyle: { type: 'dashed', color: '#f3f4f6' } },
-        axisLabel: { color: '#9ca3af' }
+        axisLabel: { color: '#9ca3af' },
+        boundaryGap: [0, '10%']
       },
       yAxis: {
         type: 'category',
@@ -134,6 +135,7 @@ const AdminDashboard = () => {
           label: {
              show: true,
              position: 'right',
+             distance: 10,
              formatter: '{c}',
              color: '#6b7280',
              fontSize: 12
