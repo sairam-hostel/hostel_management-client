@@ -360,59 +360,6 @@ const AdminDashboard = () => {
 
         {/* Sidebar Area: Recent Activity & Quick Actions */}
         <div className="space-y-8">
-
-          {/* Quick Actions */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <button onClick={() => navigate('/admin/create-student')} className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-purple-50 hover:text-purple-700 text-gray-600 transition-colors group">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white p-2 rounded-lg shadow-sm group-hover:text-purple-600"><UserPlus size={18} /></div>
-                  <span className="font-medium text-sm">Add Student</span>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"> 
-                   {/* Divider for desktop */}
-                   <div className="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gray-100 transform -translate-x-1/2"></div>
-
-                   <div className="h-[320px] w-full">
-                      <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
-                        <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Department</p>
-                      </div>
-                      {stats.students > 0 ? (
-                         <ReactECharts option={deptOption} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
-                      ) : (
-                         <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
-                            <div className="p-4 bg-gray-50 rounded-full"><School size={24} /></div>
-                            <span className="text-sm font-medium">No Department Data</span>
-                         </div>
-                      )}
-                   </div>
-
-                   <div className="h-[480px] w-full">
-                      <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: accentColor }}></div>
-                        <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">By Year</p>
-                      </div>
-                       {stats.students > 0 ? (
-                         <ReactECharts option={{
-                           ...yearOption,
-                           grid: { ...yearOption.grid, top: '15%', bottom: '5%', left: '5%', right: '5%' } 
-                         }} style={{ height: '100%', width: '100%' }} opts={{ renderer: 'svg' }} />
-                      ) : (
-                         <div className="h-full flex flex-col items-center justify-center text-gray-300 gap-3">
-                            <div className="p-4 bg-gray-50 rounded-full"><Calendar size={24} /></div>
-                            <span className="text-sm font-medium">No Year Data</span>
-                         </div>
-                      )}
-                   </div>
-                </div>
-            </div>
-         </div>
-
-         {/* Sidebar Area: Recent Activity & Quick Actions */}
-         <div className="space-y-8">
             
              {/* Quick Actions */}
              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -453,10 +400,7 @@ const AdminDashboard = () => {
                       <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                    </button>
                 </div>
-                <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-            </div>
-          </div>
+             </div>
 
           {/* Recent Activity */}
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -474,25 +418,17 @@ const AdminDashboard = () => {
               ) : stats.recentNotices.length > 0 ? (
                 stats.recentNotices.map((notice, idx) => (
                   <div key={idx} className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0 last:pb-0">
-                    <div className="mt-1 w-2 h-2 rounded-full bg-purple-500 shrink-0"></div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 line-clamp-1">{notice.title}</p>
-                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{notice.category} • {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
-                    </div>
-                  ) : stats.recentNotices.length > 0 ? (
-                    stats.recentNotices.map((notice, idx) => (
-                      <div key={idx} className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0 last:pb-0">
-                         <div className="mt-1 w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: accentColor }}></div>
-                         <div>
-                            <p className="text-sm font-medium text-gray-900 line-clamp-1">{notice.title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{notice.category} • {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
-                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-400 text-center py-4">No recent activity</p>
-                  )}
-                </div>
+                     <div className="mt-1 w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: accentColor }}></div>
+                     <div>
+                        <p className="text-sm font-medium text-gray-900 line-clamp-1">{notice.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{notice.category} • {new Date(notice.created_at || Date.now()).toLocaleDateString()}</p>
+                     </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-4">No recent activity</p>
+              )}
+            </div>
                 
                 <button 
                   onClick={() => navigate('/admin/notices')}
