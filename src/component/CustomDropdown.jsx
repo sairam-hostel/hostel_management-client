@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check, Search } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * CustomDropdown Component
@@ -19,6 +20,7 @@ import { ChevronDown, Check, Search } from 'lucide-react';
  * @returns {JSX.Element} The rendered CustomDropdown component.
  */
 const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", icon: Icon, className = "", dropUp = false, searchable = false }) => {
+  const { accentColor } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
@@ -61,19 +63,24 @@ const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", i
         className={`
           flex items-center justify-between w-full gap-3 px-4 py-2.5 
           bg-white border text-sm font-medium rounded-xl shadow-sm transition-all duration-200
-          ${isOpen 
-            ? 'border-purple-500 ring-2 ring-purple-100 text-purple-700' 
-            : 'border-gray-200 text-gray-700 hover:border-purple-300 hover:bg-gray-50'
-          }
+          ${isOpen ? 'ring-2' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
         `}
+        style={isOpen ? { 
+          borderColor: accentColor, 
+          color: accentColor,
+          backgroundColor: `${accentColor}10`,
+          boxShadow: `0 0 0 1px ${accentColor}`,
+          '--tw-ring-color': `${accentColor}20` 
+        } : {}}
       >
         <div className="flex items-center gap-2 truncate">
-          {Icon && <Icon size={16} className={isOpen ? 'text-purple-500' : 'text-gray-400'} />}
+          {Icon && <Icon size={16} className={isOpen ? '' : 'text-gray-400'} style={isOpen ? { color: accentColor } : {}} />}
           <span>{selectedLabel}</span>
         </div>
         <ChevronDown 
           size={16} 
-          className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-purple-500' : ''}`} 
+          className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+          style={isOpen ? { color: accentColor } : {}}
         />
       </button>
 
@@ -107,13 +114,17 @@ const CustomDropdown = ({ options, value, onChange, placeholder = "Select...", i
                 className={`
                   w-full flex items-center justify-start gap-2 px-3 py-2 text-sm rounded-lg transition-colors text-left
                   ${value === option.value 
-                    ? 'bg-purple-50 text-purple-700 font-medium' 
+                    ? 'font-medium' 
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }
                 `}
+                style={value === option.value ? { 
+                  backgroundColor: `${accentColor}15`, 
+                  color: accentColor 
+                } : {}}
               >
                 <span className="flex-1">{option.label}</span>
-                {value === option.value && <Check size={14} className="text-purple-600 ml-auto shrink-0" />}
+                {value === option.value && <Check size={14} style={{ color: accentColor }} className="ml-auto shrink-0" />}
               </button>
             ))) : (
               <div className="p-3 text-center text-sm text-gray-400">

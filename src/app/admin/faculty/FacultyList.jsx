@@ -7,8 +7,10 @@ import api from '../../../utils/api';
 import ConfirmationModal from '../../../component/ConfirmationModal';
 // import BulkUploadModal from './BulkUploadModal';
 import BulkUploadModal from '../../../component/BulkUploadModal';
+import { useTheme } from '../../../context/ThemeContext';
 
 const FacultyList = () => {
+  const { accentColor } = useTheme();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, facultyId: null });
@@ -127,14 +129,16 @@ const FacultyList = () => {
       <div className="flex justify-end gap-3 mb-4">
         <button
           onClick={() => setIsUploadModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white border rounded-lg hover:bg-gray-50 transition-colors"
+          style={{ borderColor: accentColor, color: accentColor }}
         >
           <Upload size={16} />
           Bulk Upload
         </button>
         <button 
           onClick={() => navigate('/admin/create-faculty')}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+          className="text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+          style={{ backgroundColor: accentColor }}
         >
           Add New Faculty
         </button>

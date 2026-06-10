@@ -7,46 +7,83 @@ import api from '../utils/api';
 const UPLOAD_CONFIG = {
   student: {
     title: 'Bulk Upload Students',
-    endpoint: '/bf1/accounts/students/register',
+    endpoint: '/bf1/accounts/students/register/bulk',
+    isBulk: true,
     templateName: 'Student_Upload_Template.xlsx',
     templateData: [
       {
-        name: "John Doe",
-        email: "john@example.com",
-        roll_number: "21IT001",
-        register_number: "810021205001",
-        department: "Information Technology (IT)",
-        year: "3",
-        section: "A",
-        batch: "2021-2025",
+        name: "SIVA SHANKAR S",
+        email: "sec24ei028@sairamtap.edu.in",
+        roll_number: "sec24ei028",
+        register_number: "2403412510721047",
+        department: "EIE",
+        year: "2",
+        section: "B",
+        batch: "2024-2028",
         hostel_block: "A",
-        room_number: "101",
-        bed_number: "1",
-        warden_name: "Mr. Smith",
-        floor: "1",
+        room_number: "104",
+        bed_number: "3",
+        floor: 0,
         status: "in",
-        gender: "Male",
-        phone: "9876543210",
-        dob: "2003-05-15", // YYYY-MM-DD
-        blood_group: "O+",
-        father_name: "Father Name",
-        father_phone: "9876543211",
-        address_line_1: "123 Main St",
-        city: "Chennai",
+        gender: "MALE",
+        phone: "9363906389",
+        dob: "2005-07-15T00:00:00.000Z",
+        blood_group: "A+",
+        father_name: "SHANMUGAM N",
+        father_phone: "9080016747",
+        address_line_1: "1/180,NATTAMANGALAM,METTUR DAM",
+        city: "SALEM",
         state: "Tamil Nadu",
-        pincode: "600001"
+        pincode: "636452"
       }
     ],
-    mapRow: (row) => ({
-      ...row,
-      password: row.password || 'Student@123',
-      year: String(row.year),
-      status: row.status || 'in'
-    })
+    mapRow: (row) => {
+      // Helper function to format Excel date to ISO string if needed
+      const formatDob = (dobStr) => {
+        if (!dobStr) return "2000-01-01T00:00:00.000Z"; // Default fallback
+        try {
+          const date = new Date(dobStr);
+          if (!isNaN(date.getTime())) {
+            return date.toISOString();
+          }
+        } catch (e) {
+          console.error("Invalid date format", e);
+        }
+        return "2000-01-01T00:00:00.000Z";
+      };
+
+      return {
+        name: row.name || '',
+        email: row.email || '',
+        roll_number: String(row.roll_number || ''),
+        register_number: String(row.register_number || ''),
+        department: row.department || '',
+        year: String(row.year || ''),
+        section: row.section || '',
+        batch: row.batch || '',
+        hostel_block: row.hostel_block || '',
+        room_number: String(row.room_number || ''),
+        bed_number: String(row.bed_number || ''),
+        floor: Number(row.floor || 0),
+        status: row.status || 'in',
+        gender: row.gender ? row.gender.toUpperCase() : 'MALE',
+        phone: String(row.phone || ''),
+        dob: row.dob ? formatDob(row.dob) : "2000-01-01T00:00:00.000Z",
+        blood_group: row.blood_group || '',
+        father_name: row.father_name || '',
+        father_phone: String(row.father_phone || ''),
+        address_line_1: row.address_line_1 || '',
+        city: row.city || '',
+        state: row.state || '',
+        pincode: String(row.pincode || ''),
+        password: row.password || 'Student@123'
+      };
+    }
   },
   faculty: {
     title: 'Bulk Upload Faculty',
-    endpoint: '/bf1/accounts/faculty/register',
+    endpoint: '/bf1/accounts/faculty/register/bulk',
+    isBulk: true,
     templateName: 'Faculty_Upload_Template.xlsx',
     templateData: [
       {
@@ -130,34 +167,57 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess, type = 'student' }) => {
 
         setProgress({ total: jsonData.length, current: 0, success: 0, failed: 0 });
 
-        let failedCount = 0;
+        if (config.isBulk) {
+             // BULK UPLOAD LOGIC
+             try {
+                const payload = jsonData.map(row => config.mapRow(row));
+                
+                await api.post(config.endpoint, payload);
+                
+                setProgress({ total: jsonData.length, current: jsonData.length, success: jsonData.length, failed: 0 });
+                setLogs(prev => [...prev, { type: 'success', message: `Successfully uploaded ${jsonData.length} records.` }]);
+                
+                if (onSuccess) onSuccess();
+                showToast(`${config.title} completed successfully`, 'success');
 
-        for (let i = 0; i < jsonData.length; i++) {
-          const row = jsonData[i];
-          setProgress(prev => ({ ...prev, current: i + 1 }));
+             } catch (err) {
+                console.error('Bulk upload error:', err);
+                const errorMsg = err.response?.data?.message || err.message || 'Bulk upload failed';
+                setProgress({ total: jsonData.length, current: jsonData.length, success: 0, failed: jsonData.length });
+                setLogs(prev => [...prev, { type: 'error', message: `Bulk Upload Failed: ${errorMsg}` }]);
+                showToast(`Upload failed: ${errorMsg}`, 'error');
+             }
 
-          try {
-             const payload = config.mapRow(row);
-             
-             await api.post(config.endpoint, payload);
-             
-             setProgress(prev => ({ ...prev, success: prev.success + 1 }));
-             setLogs(prev => [...prev, { type: 'success', message: `Row ${i + 2}: Added ${payload.name}` }]); 
-
-          } catch (err) {
-            console.error(err);
-            const errorMsg = err.response?.data?.message || err.message || 'Unknown error';
-            failedCount++;
-            setProgress(prev => ({ ...prev, failed: prev.failed + 1 }));
-            setLogs(prev => [...prev, { type: 'error', message: `Row ${i + 2}: Failed - ${errorMsg}` }]);
-          }
-        }
-        
-        if (failedCount === 0) {
-            if (onSuccess) onSuccess(); 
-            showToast(`${config.title} completed successfully`, 'success');
         } else {
-            showToast(`${config.title} completed with ${failedCount} errors`, 'warning');
+            // ROW-BY-ROW LOGIC (Legacy/Faculty)
+            let failedCount = 0;
+            for (let i = 0; i < jsonData.length; i++) {
+              const row = jsonData[i];
+              setProgress(prev => ({ ...prev, current: i + 1 }));
+
+              try {
+                const payload = config.mapRow(row);
+                
+                await api.post(config.endpoint, payload);
+                
+                setProgress(prev => ({ ...prev, success: prev.success + 1 }));
+                setLogs(prev => [...prev, { type: 'success', message: `Row ${i + 2}: Added ${payload.name}` }]); 
+
+              } catch (err) {
+                console.error(err);
+                const errorMsg = err.response?.data?.message || err.message || 'Unknown error';
+                failedCount++;
+                setProgress(prev => ({ ...prev, failed: prev.failed + 1 }));
+                setLogs(prev => [...prev, { type: 'error', message: `Row ${i + 2}: Failed - ${errorMsg}` }]);
+              }
+            }
+            
+            if (failedCount === 0) {
+                if (onSuccess) onSuccess(); 
+                showToast(`${config.title} completed successfully`, 'success');
+            } else {
+                showToast(`${config.title} completed with ${failedCount} errors`, 'warning');
+            }
         }
 
       } catch (err) {

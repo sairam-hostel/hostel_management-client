@@ -3,6 +3,7 @@ import { Search, Filter, Loader, ChevronLeft, ChevronRight, AlertCircle, Refresh
 
 import api from '../utils/api';
 import CustomDropdown from './CustomDropdown';
+import { useTheme } from '../context/ThemeContext';
 
 
 // Simple debounce utility if lodash is not installed or to keep it light
@@ -47,8 +48,10 @@ const ApiTableManager = ({
   title = "List",
   searchPlaceholder = "Search...",
   headerActions,
-  noDataComponent
+  noDataComponent,
+  dataTransformer 
 }) => {
+  const { accentColor } = useTheme();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -100,21 +103,34 @@ const ApiTableManager = ({
         const responseData = response.data;
 
         // Handle standardized pagination response structure
+        let rawData = [];
+        let totalItems = 0;
+
         if (responseData.pagination && Array.isArray(responseData.data)) {
-          setData(responseData.data);
-          setTotal(responseData.pagination.total_items || 0);
+          rawData = responseData.data;
+          totalItems = responseData.pagination.total_items || 0;
         } else if (responseData.data && Array.isArray(responseData.data)) {
            // Fallback for previous structure
-           setData(responseData.data);
-           setTotal(responseData.total || responseData.count || responseData.data.length || 0);
+           rawData = responseData.data;
+           totalItems = responseData.total || responseData.count || responseData.data.length || 0;
         } else if (Array.isArray(responseData)) {
           // Fallback for direct array response
-          setData(responseData);
-          setTotal(responseData.length);
-        } else {
-          setData([]);
-          setTotal(0);
+          rawData = responseData;
+          totalItems = responseData.length;
         }
+
+        // Apply data transformation if provided (e.g. for fetching related data)
+        if (dataTransformer && typeof dataTransformer === 'function') {
+           try {
+             rawData = await dataTransformer(rawData);
+           } catch (transformErr) {
+             console.error('Error transforming data:', transformErr);
+             // Optionally handle partial failure or just show raw data
+           }
+        }
+
+        setData(rawData);
+        setTotal(totalItems);
       } else {
         setData([]);
         setTotal(0);
@@ -166,7 +182,8 @@ const ApiTableManager = ({
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-full sm:w-64"
+              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:border-transparent w-full sm:w-64"
+              style={{ '--tw-ring-color': `${accentColor}40` }}
             />
           </div>
           <div className="flex gap-2">
@@ -191,7 +208,7 @@ const ApiTableManager = ({
       {/* Content Area */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <Loader className="animate-spin text-purple-600" size={32} />
+          <Loader className="animate-spin" size={32} style={{ color: accentColor }} />
         </div>
       ) : error ? (
         <div className="flex items-center justify-center h-64 text-red-500 gap-2">
