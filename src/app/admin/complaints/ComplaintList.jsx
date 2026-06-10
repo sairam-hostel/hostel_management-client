@@ -41,7 +41,7 @@ const ComplaintList = () => {
         const normalizedStatus = (complaint.status || 'pending').toLowerCase();
         const statusConfig = STATUS_CONFIG[normalizedStatus] || STATUS_CONFIG['pending'];
         const Icon = statusConfig.icon;
-        
+
         return (
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium gap-1 ${statusConfig.color}`}>
             <Icon size={12} />
